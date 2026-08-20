@@ -1,530 +1,386 @@
 /* =====================================================
-   FIREBASE CONFIG & INITIALIZATION
+   1. FIREBASE CONFIG & INITIALIZATION
 ===================================================== */
-
 const firebaseConfig = {
-  apiKey: "AIzaSyDL7E1lUagmRaSsOIQixcINfGX-wLjUysE",
-  authDomain: "arzmart-222af.firebaseapp.com",
-  databaseURL: "https://arzmart-222af-default-rtdb.firebaseio.com",
-  projectId: "arzmart-222af",
-  storageBucket: "arzmart-222af.firebasestorage.app",
-  messagingSenderId: "430534887642",
-  appId: "1:430534887642:web:ca78c52c9b524d45fd7de3",
-  measurementId: "G-RK7XJBS71Y"
+  apiKey: "AIzaSyDn4WPWd-ijhbroy76l3quRn3IC4SlcyeQ",
+  authDomain: "tess-9dcdd.firebaseapp.com",
+  databaseURL: "https://tess-9dcdd-default-rtdb.firebaseio.com",
+  projectId: "tess-9dcdd",
+  storageBucket: "tess-9dcdd.firebasestorage.app",
+  messagingSenderId: "1034836978101",
+  appId: "1:1034836978101:web:b697114908e17a6955d1fc",
+  measurementId: "G-4ZFH5WRCSD"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-/* =====================================================
-   DATA & VARIABLES
-===================================================== */
-
-let products = [];
-let transactions = [];
+// State Lokal
+let productsData = {};
 let cart = [];
-let paymentMethod = "Cash";
-let chart = null;
 
 /* =====================================================
-   FIREBASE REALTIME SINKRONISASI PERMANEN
+   2. ELEMENT DOM REFERENCES
 ===================================================== */
+const productForm = document.getElementById("productForm");
+const productTableBody = document.getElementById("productTableBody");
+const cartTableBody = document.getElementById("cartTableBody");
+const historyTableBody = document.getElementById("historyTableBody");
 
-// Realtime Listener Produk
+const editIdInput = document.getElementById("editId");
+const productNameInput = document.getElementById("productName");
+const productPriceInput = document.getElementById("productPrice");
+const productStockInput = document.getElementById("productStock");
+
+const formTitle = document.getElementById("formTitle");
+const btnSave = document.getElementById("btnSave");
+const btnCancel = document.getElementById("btnCancel");
+
+const cartTotalEl = document.getElementById("cartTotal");
+const payAmountInput = document.getElementById("payAmount");
+const changeAmountEl = document.getElementById("changeAmount");
+
+/* =====================================================
+   3. EVENT LISTENERS
+===================================================== */
+productForm.addEventListener("submit", function (e) {
+  e.preventDefault();
+  saveProduct();
+});
+
+/* =====================================================
+   4. REALTIME DATABASE LISTENERS
+===================================================== */
+// Load Realtime Produk
 db.ref("products").on("value", (snapshot) => {
-  const data = snapshot.val();
-  if (data) {
-    products = Object.values(data);
-  } else {
-    products = [];
-  }
-  refreshCurrentUI();
+  productsData = snapshot.val() || {};
+  renderProductsTable(productsData);
 });
 
-// Realtime Listener Transaksi
+// Load Realtime Riwayat Penjualan
 db.ref("transactions").on("value", (snapshot) => {
-  const data = snapshot.val();
-  if (data) {
-    transactions = Object.values(data);
-  } else {
-    transactions = [];
-  }
-  refreshCurrentUI();
-});
-
-function refreshCurrentUI() {
-  renderProducts();
-  renderCart();
-  updateDashboard();
-  renderProductTable();
-  renderTransactions();
-}
-
-/* =====================================================
-   HELPER / UTILS
-===================================================== */
-
-function formatRp(val) {
-  return "Rp" + Number(val || 0).toLocaleString("id-ID");
-}
-
-function showToast(msg) {
-  const t = document.getElementById("toast");
-  if (!t) return;
-  t.innerText = msg;
-  t.classList.add("show");
-  setTimeout(() => t.classList.remove("show"), 3000);
-}
-
-function closeModal(id) {
-  document.getElementById(id).classList.remove("show");
-}
-
-function toggleSidebar() {
-  document.getElementById("sidebar").classList.toggle("open");
-}
-
-function toggleDark() {
-  document.body.classList.toggle("dark");
-}
-
-/* =====================================================
-   INIT & LOGIN
-===================================================== */
-
-function init() {
-  const now = new Date();
-  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  document.getElementById("tanggal").innerText = now.toLocaleDateString('id-ID', options);
-  refreshCurrentUI();
-}
-
-function login() {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value;
-
-  if (username === "admin" && password === "12345") {
-    localStorage.setItem("arizky_login", "true");
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("app").style.display = "block";
-    showToast("Selamat datang, Admin 👋");
-    init();
-  } else {
-    showToast("Username atau password salah ❌");
-  }
-}
-
-function logout() {
-  localStorage.removeItem("arizky_login");
-  location.reload();
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  if (localStorage.getItem("arizky_login") === "true") {
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("app").style.display = "block";
-    init();
-  }
+  const transactions = snapshot.val() || {};
+  renderHistoryTable(transactions);
 });
 
 /* =====================================================
-   PAGE NAVIGATION
+   5. FITUR CRUD PRODUK
 ===================================================== */
-
-function showPage(id, element) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-
-  document.querySelectorAll(".nav").forEach(n => n.classList.remove("active"));
-  if (element) element.classList.add("active");
-
-  const titles = {
-    dashboard: "Dashboard",
-    kasir: "Kasir",
-    produk: "Produk",
-    laporan: "Laporan"
-  };
-
-  document.getElementById("pageTitle").innerText = titles[id];
-
-  if (id === "dashboard") updateDashboard();
-  if (id === "produk") renderProductTable();
-  if (id === "laporan") renderTransactions();
-
-  if (window.innerWidth < 700) {
-    document.getElementById("sidebar").classList.remove("open");
-  }
-}
-
-/* =====================================================
-   PRODUCTS MANAGEMENT
-===================================================== */
-
-function renderProducts() {
-  const grid = document.getElementById("productGrid");
-  if (!grid) return;
-
-  const keyword = (document.getElementById("searchProduct")?.value || "").toLowerCase();
-  const filtered = products.filter(p => p.name.toLowerCase().includes(keyword));
-
-  document.getElementById("jumlahProduk").innerText = filtered.length + " produk";
-  grid.innerHTML = "";
-
-  if (filtered.length === 0) {
-    grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--muted); padding: 30px;">Belum ada produk. Tambahkan di menu Produk.</div>`;
-    return;
-  }
-
-  filtered.forEach(p => {
-    const disabled = p.stock <= 0;
-    grid.innerHTML += `
-      <div class="product" onclick="${disabled ? "" : `addToCart('${p.id}')`}" style="${disabled ? "opacity:.5;cursor:not-allowed" : ""}">
-        <div class="product-icon">${getProductIcon(p.name)}</div>
-        <div class="product-name">${p.name}</div>
-        <div class="product-price">${formatRp(p.price)}</div>
-        <div class="stock">${p.stock > 0 ? "Stok " + p.stock : "STOK HABIS"}</div>
-      </div>
-    `;
-  });
-}
-
-function getProductIcon(name) {
-  name = name.toLowerCase();
-  if (name.includes("aqua") || name.includes("air")) return "💧";
-  if (name.includes("teh")) return "🧃";
-  if (name.includes("kopi")) return "☕";
-  if (name.includes("roti")) return "🍞";
-  if (name.includes("susu")) return "🥛";
-  if (name.includes("indomie") || name.includes("mie")) return "🍜";
-  return "📦";
-}
-
-function renderProductTable() {
-  const tbody = document.getElementById("productTable");
-  if (!tbody) return;
-  tbody.innerHTML = "";
-
-  if (products.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);">Tidak ada data produk</td></tr>`;
-    return;
-  }
-
-  products.forEach(p => {
-    const status = p.stock > 5 ? `<span style="color:var(--success)">Tersedia</span>` : p.stock > 0 ? `<span style="color:var(--warning)">Menipis</span>` : `<span style="color:var(--danger)">Habis</span>`;
-    tbody.innerHTML += `
-      <tr>
-        <td><b>${p.name}</b></td>
-        <td>${formatRp(p.price)}</td>
-        <td>${p.stock}</td>
-        <td>${status}</td>
-        <td>
-          <button class="btn btn-orange btn-sm" onclick="editProductModal('${p.id}')">✏️ Edit</button>
-          <button class="btn btn-red btn-sm" onclick="deleteProduct('${p.id}')">🗑️ Hapus</button>
-        </td>
-      </tr>
-    `;
-  });
-}
-
-function openProductModal() {
-  document.getElementById("editId").value = "";
-  document.getElementById("productName").value = "";
-  document.getElementById("productPrice").value = "";
-  document.getElementById("productStock").value = "";
-  document.getElementById("productModalTitle").innerText = "Tambah Produk";
-  document.getElementById("productModal").classList.add("show");
-}
-
-function editProductModal(id) {
-  const p = products.find(prod => String(prod.id) === String(id));
-  if (!p) return;
-  document.getElementById("editId").value = p.id;
-  document.getElementById("productName").value = p.name;
-  document.getElementById("productPrice").value = p.price;
-  document.getElementById("productStock").value = p.stock;
-  document.getElementById("productModalTitle").innerText = "Edit Produk";
-  document.getElementById("productModal").classList.add("show");
-}
-
 function saveProduct() {
-  const editId = document.getElementById("editId").value;
-  const name = document.getElementById("productName").value.trim();
-  const price = Number(document.getElementById("productPrice").value) || 0;
-  const stock = Number(document.getElementById("productStock").value) || 0;
+  const editId = editIdInput.value;
+  const name = productNameInput.value.trim();
+  const price = Number(productPriceInput.value) || 0;
+  const stock = Number(productStockInput.value) || 0;
 
   if (!name || price <= 0) {
-    showToast("Isi nama dan harga produk dengan benar!");
+    alert("Isi nama dan harga produk dengan benar!");
     return;
   }
 
-  const prodId = editId ? String(editId) : String(Date.now());
+  const prodId = editId ? editId : "PROD-" + Date.now();
   const productData = { id: prodId, name, price, stock };
 
-  db.ref("products/" + prodId).set(productData).then(() => {
-    closeModal("productModal");
-    showToast("Produk tersimpan ✓");
+  db.ref("products/" + prodId).set(productData)
+    .then(() => resetProductForm())
+    .catch((err) => alert("Gagal menyimpan: " + err.message));
+}
+
+function renderProductsTable(data) {
+  productTableBody.innerHTML = "";
+  const keys = Object.keys(data);
+
+  if (keys.length === 0) {
+    productTableBody.innerHTML = `<tr><td colspan="5" class="text-center">Belum ada produk tersimpan.</td></tr>`;
+    return;
+  }
+
+  keys.forEach((key) => {
+    const p = data[key];
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td><code>${p.id}</code></td>
+      <td><strong>${escapeHtml(p.name)}</strong></td>
+      <td>Rp ${p.price.toLocaleString("id-ID")}</td>
+      <td>${p.stock}</td>
+      <td class="action-btns">
+        <button class="btn btn-add-cart" onclick="addToCart('${p.id}')">+ Kasir</button>
+        <button class="btn btn-edit" onclick="editProduct('${p.id}')">Edit</button>
+        <button class="btn btn-danger" onclick="deleteProduct('${p.id}')">Hapus</button>
+      </td>
+    `;
+    productTableBody.appendChild(row);
   });
+}
+
+function filterProducts() {
+  const query = document.getElementById("searchProduct").value.toLowerCase();
+  const filtered = {};
+
+  Object.keys(productsData).forEach((key) => {
+    const p = productsData[key];
+    if (p.name.toLowerCase().includes(query) || p.id.toLowerCase().includes(query)) {
+      filtered[key] = p;
+    }
+  });
+
+  renderProductsTable(filtered);
+}
+
+function editProduct(id) {
+  const p = productsData[id];
+  if (!p) return;
+
+  editIdInput.value = p.id;
+  productNameInput.value = p.name;
+  productPriceInput.value = p.price;
+  productStockInput.value = p.stock;
+
+  formTitle.textContent = "Edit Produk (" + p.id + ")";
+  btnSave.textContent = "Update Produk";
+  btnCancel.style.display = "inline-block";
 }
 
 function deleteProduct(id) {
   if (confirm("Apakah kamu yakin ingin menghapus produk ini?")) {
-    db.ref("products/" + id).remove().then(() => {
-      showToast("Produk dihapus");
-    });
+    db.ref("products/" + id).remove().catch((err) => alert("Gagal hapus: " + err.message));
   }
+}
+
+function resetProductForm() {
+  editIdInput.value = "";
+  productForm.reset();
+  formTitle.textContent = "Tambah Produk Baru";
+  btnSave.textContent = "Simpan Produk";
+  btnCancel.style.display = "none";
 }
 
 /* =====================================================
-   CART & TRANSACTIONS
+   6. FITUR KASIR & KERANJANG
 ===================================================== */
+function addToCart(productId) {
+  const product = productsData[productId];
+  if (!product) return;
 
-function addToCart(id) {
-  const product = products.find(p => String(p.id) === String(id));
-  if (!product || product.stock <= 0) {
-    showToast("Stok habis!");
+  if (product.stock <= 0) {
+    alert("Stok produk habis!");
     return;
   }
 
-  const item = cart.find(i => String(i.id) === String(id));
-  if (item) {
-    if (item.qty >= product.stock) {
-      showToast("Stok tidak mencukupi!");
+  const existingItem = cart.find((item) => item.id === productId);
+
+  if (existingItem) {
+    if (existingItem.qty + 1 > product.stock) {
+      alert("Jumlah melebihi stok yang tersedia!");
       return;
     }
-    item.qty++;
+    existingItem.qty += 1;
+    existingItem.subtotal = existingItem.qty * existingItem.price;
   } else {
-    cart.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
+    cart.push({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      qty: 1,
+      subtotal: product.price
+    });
   }
+
   renderCart();
-}
-
-function changeQty(id, amount) {
-  const item = cart.find(i => String(i.id) === String(id));
-  if (!item) return;
-
-  const product = products.find(p => String(p.id) === String(id));
-  item.qty += amount;
-
-  if (item.qty <= 0) {
-    cart = cart.filter(i => String(i.id) !== String(id));
-  } else if (product && item.qty > product.stock) {
-    item.qty = product.stock;
-    showToast("Jumlah melebihi stok!");
-  }
-  renderCart();
-}
-
-function removeCart(id) {
-  cart = cart.filter(i => String(i.id) !== String(id));
-  renderCart();
-}
-
-function clearCart() {
-  if (cart.length === 0) return;
-  cart = [];
-  renderCart();
-  showToast("Keranjang dikosongkan");
-}
-
-function getSubtotal() {
-  return cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 }
 
 function renderCart() {
-  const container = document.getElementById("cartItems");
-  if (!container) return;
-  container.innerHTML = "";
+  cartTableBody.innerHTML = "";
 
   if (cart.length === 0) {
-    container.innerHTML = `
-      <div style="text-align:center;padding:50px 10px;color:#94a3b8">
-        <div style="font-size:45px">🛍️</div>
-        <p style="margin-top:10px">Keranjang masih kosong</p>
-      </div>
-    `;
-  }
-
-  cart.forEach(item => {
-    container.innerHTML += `
-      <div class="cart-item">
-        <div style="width:40px;height:40px;border-radius:10px;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:20px">
-          ${getProductIcon(item.name)}
-        </div>
-        <div class="cart-item-info">
-          <div class="cart-item-name">${item.name}</div>
-          <div class="cart-item-price">${formatRp(item.price)}</div>
-          <div class="qty">
-            <button onclick="changeQty('${item.id}', -1)">-</button>
-            <span><b>${item.qty}</b></span>
-            <button onclick="changeQty('${item.id}', 1)">+</button>
-          </div>
-        </div>
-        <div style="text-align:right">
-          <b>${formatRp(item.price * item.qty)}</b><br>
-          <button class="btn btn-red btn-sm" style="margin-top:8px;padding:3px 7px" onclick="removeCart('${item.id}')">✕</button>
-        </div>
-      </div>
-    `;
-  });
-
-  const total = getSubtotal();
-  document.getElementById("subtotal").innerText = formatRp(total);
-  document.getElementById("diskon").innerText = "Rp0";
-  document.getElementById("cartTotal").innerText = formatRp(total);
-}
-
-function openPayment() {
-  if (cart.length === 0) {
-    showToast("Keranjang masih kosong!");
+    cartTableBody.innerHTML = `<tr><td colspan="4" class="text-center">Keranjang masih kosong</td></tr>`;
+    cartTotalEl.textContent = "Rp 0";
+    calculateChange();
     return;
   }
-  const total = getSubtotal();
-  document.getElementById("paymentTotal").innerText = formatRp(total);
-  document.getElementById("cashInput").value = "";
-  document.getElementById("change").innerText = "Rp0";
-  document.getElementById("paymentModal").classList.add("show");
+
+  let grandTotal = 0;
+
+  cart.forEach((item, index) => {
+    grandTotal += item.subtotal;
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${escapeHtml(item.name)}</td>
+      <td>
+        <input type="number" value="${item.qty}" min="1" style="width: 50px; padding: 2px 4px;" onchange="updateCartQty(${index}, this.value)" />
+      </td>
+      <td>Rp ${item.subtotal.toLocaleString("id-ID")}</td>
+      <td><button class="btn btn-danger" onclick="removeFromCart(${index})">X</button></td>
+    `;
+    cartTableBody.appendChild(row);
+  });
+
+  cartTotalEl.textContent = "Rp " + grandTotal.toLocaleString("id-ID");
+  calculateChange();
 }
 
-function selectPayment(method, el) {
-  paymentMethod = method;
-  document.querySelectorAll(".payment").forEach(p => p.classList.remove("active"));
-  el.classList.add("active");
+function updateCartQty(index, newQty) {
+  const qty = Number(newQty);
+  const item = cart[index];
+  const originalStock = productsData[item.id].stock;
 
-  const cashArea = document.getElementById("cashArea");
-  if (cashArea) {
-    cashArea.style.display = method === "Cash" ? "block" : "none";
+  if (qty <= 0) {
+    removeFromCart(index);
+    return;
   }
+
+  if (qty > originalStock) {
+    alert("Stok tidak mencukupi! Maksimal: " + originalStock);
+    renderCart();
+    return;
+  }
+
+  item.qty = qty;
+  item.subtotal = item.qty * item.price;
+  renderCart();
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  renderCart();
 }
 
 function calculateChange() {
-  const total = getSubtotal();
-  const cash = Number(document.getElementById("cashInput").value) || 0;
-  const change = cash - total;
-  document.getElementById("change").innerText = formatRp(change > 0 ? change : 0);
-}
+  const grandTotal = cart.reduce((sum, item) => sum + item.subtotal, 0);
+  const payAmount = Number(payAmountInput.value) || 0;
+  const change = payAmount - grandTotal;
 
-function completePayment() {
-  const total = getSubtotal();
-  const cash = Number(document.getElementById("cashInput").value) || 0;
-
-  if (paymentMethod === "Cash" && cash < total) {
-    showToast("Uang yang dimasukkan kurang!");
-    return;
-  }
-
-  // Deduct Stock di Firebase
-  cart.forEach(item => {
-    const prod = products.find(p => String(p.id) === String(item.id));
-    if (prod) {
-      const newStock = Math.max(0, prod.stock - item.qty);
-      db.ref("products/" + prod.id + "/stock").set(newStock);
-    }
-  });
-
-  // Simpan Transaksi Permanen di Firebase Realtime
-  const transId = "TRX-" + Date.now();
-  const transaction = {
-    id: transId,
-    date: new Date().toISOString(),
-    method: paymentMethod,
-    items: cart,
-    total: total
-  };
-
-  db.ref("transactions/" + transId).set(transaction).then(() => {
-    cart = [];
-    closeModal("paymentModal");
-    showToast("Transaksi berhasil! 🎉");
-  });
-}
-
-function renderTransactions() {
-  const tbody = document.getElementById("transactionTable");
-  if (!tbody) return;
-  tbody.innerHTML = "";
-
-  if (transactions.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);">Belum ada riwayat transaksi</td></tr>`;
-    return;
-  }
-
-  transactions.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach((t, i) => {
-    const d = new Date(t.date);
-    const dateStr = d.toLocaleDateString("id-ID") + " " + d.toLocaleTimeString("id-ID", {hour:'2-digit', minute:'2-digit'});
-    tbody.innerHTML += `
-      <tr>
-        <td>${i + 1}</td>
-        <td>${dateStr}</td>
-        <td><b>${t.method}</b></td>
-        <td>${formatRp(t.total)}</td>
-        <td>
-          <button class="btn btn-gray btn-sm" onclick="alert('Detail Transaksi ID: ${t.id}\\nTotal: ${formatRp(t.total)}')">👁️ Detail</button>
-        </td>
-      </tr>
-    `;
-  });
-}
-
-function clearTransactions() {
-  if (confirm("Hapus seluruh riwayat transaksi?")) {
-    db.ref("transactions").remove().then(() => {
-      showToast("Riwayat dihapus");
-    });
+  if (change >= 0) {
+    changeAmountEl.textContent = "Rp " + change.toLocaleString("id-ID");
+  } else {
+    changeAmountEl.textContent = "Kurang Rp " + Math.abs(change).toLocaleString("id-ID");
   }
 }
 
 /* =====================================================
-   DASHBOARD STATS & CHART
+   7. CHECKOUT TRANSAKSI & CETAK STRUK
 ===================================================== */
+function checkout() {
+  if (cart.length === 0) {
+    alert("Keranjang belanjaan kosong!");
+    return;
+  }
 
-function updateDashboard() {
-  const today = new Date().toDateString();
+  const grandTotal = cart.reduce((sum, item) => sum + item.subtotal, 0);
+  const payAmount = Number(payAmountInput.value) || 0;
 
-  const todayTrans = transactions.filter(t => new Date(t.date).toDateString() === today);
-  const totalHariIni = todayTrans.reduce((sum, t) => sum + t.total, 0);
-  
-  let totalProdukTerjual = 0;
-  transactions.forEach(t => {
-    if (t.items) {
-      t.items.forEach(i => totalProdukTerjual += i.qty);
-    }
-  });
+  if (payAmount < grandTotal) {
+    alert("Uang pembayaran kurang!");
+    return;
+  }
 
-  const stokMenipisCount = products.filter(p => p.stock <= 5).length;
+  const change = payAmount - grandTotal;
+  const txId = "TX-" + Date.now();
+  const txTime = new Date().toLocaleString("id-ID");
 
-  document.getElementById("jualHariIni").innerText = formatRp(totalHariIni);
-  document.getElementById("totalTransaksi").innerText = transactions.length;
-  document.getElementById("produkTerjual").innerText = totalProdukTerjual;
-  document.getElementById("stokMenipis").innerText = stokMenipisCount;
+  const transactionData = {
+    id: txId,
+    time: txTime,
+    items: cart,
+    total: grandTotal,
+    pay: payAmount,
+    change: change
+  };
 
-  renderChart();
+  // 1. Simpan Transaksi ke Firebase
+  db.ref("transactions/" + txId).set(transactionData)
+    .then(() => {
+      // 2. Potong Stok Produk di Firebase
+      cart.forEach((item) => {
+        const currentStock = productsData[item.id].stock;
+        const newStock = Math.max(0, currentStock - item.qty);
+        db.ref("products/" + item.id + "/stock").set(newStock);
+      });
+
+      // 3. Cetak Struk
+      printReceipt(transactionData);
+
+      // 4. Clear Keranjang
+      cart = [];
+      payAmountInput.value = "";
+      renderCart();
+      alert("Transaksi Berhasil!");
+    })
+    .catch((err) => alert("Gagal transaksi: " + err.message));
 }
 
-function renderChart() {
-  const ctx = document.getElementById("grafik");
-  if (!ctx) return;
-
-  if (chart) chart.destroy();
-
-  const labels = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
-  const dataSales = [0, 0, 0, 0, 0, 0, 0];
-
-  chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Penjualan',
-        data: dataSales,
-        borderColor: '#6366f1',
-        backgroundColor: 'rgba(99,102,241,0.1)',
-        fill: true,
-        tension: 0.4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false
-    }
+function printReceipt(tx) {
+  const printArea = document.getElementById("receiptPrintArea");
+  
+  let itemsHtml = "";
+  tx.items.forEach((item) => {
+    itemsHtml += `
+      <div style="display:flex; justify-content:space-between;">
+        <span>${item.name} x${item.qty}</span>
+        <span>Rp ${item.subtotal.toLocaleString("id-ID")}</span>
+      </div>
+    `;
   });
+
+  printArea.innerHTML = `
+    <div style="text-align:center;">
+      <h2 style="margin:0;">ArizkyMart</h2>
+      <p style="margin:2px 0;">--------------------------------</p>
+      <p style="margin:2px 0;">ID: ${tx.id}</p>
+      <p style="margin:2px 0;">${tx.time}</p>
+      <p style="margin:2px 0;">--------------------------------</p>
+    </div>
+    ${itemsHtml}
+    <p style="margin:2px 0;">--------------------------------</p>
+    <div style="display:flex; justify-content:space-between;">
+      <strong>Total:</strong>
+      <strong>Rp ${tx.total.toLocaleString("id-ID")}</strong>
+    </div>
+    <div style="display:flex; justify-content:space-between;">
+      <span>Bayar:</span>
+      <span>Rp ${tx.pay.toLocaleString("id-ID")}</span>
+    </div>
+    <div style="display:flex; justify-content:space-between;">
+      <span>Kembali:</span>
+      <span>Rp ${tx.change.toLocaleString("id-ID")}</span>
+    </div>
+    <p style="margin:2px 0;">--------------------------------</p>
+    <p style="text-align:center; margin-top:10px;">Terima Kasih Telah Berbelanja!</p>
+  `;
+
+  window.print();
+}
+
+/* =====================================================
+   8. RIWAYAT PENJUALAN
+===================================================== */
+function renderHistoryTable(transactions) {
+  historyTableBody.innerHTML = "";
+  const keys = Object.keys(transactions).reverse(); // urutkan paling baru
+
+  if (keys.length === 0) {
+    historyTableBody.innerHTML = `<tr><td colspan="6" class="text-center">Belum ada riwayat transaksi</td></tr>`;
+    return;
+  }
+
+  keys.forEach((key) => {
+    const tx = transactions[key];
+    const totalItems = tx.items.reduce((sum, item) => sum + item.qty, 0);
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td><code>${tx.id}</code></td>
+      <td>${tx.time}</td>
+      <td>${totalItems} item</td>
+      <td><strong>Rp ${tx.total.toLocaleString("id-ID")}</strong></td>
+      <td>Rp ${tx.pay.toLocaleString("id-ID")}</td>
+      <td>Rp ${tx.change.toLocaleString("id-ID")}</td>
+    `;
+    historyTableBody.appendChild(row);
+  });
+}
+
+function escapeHtml(text) {
+  return text.replace(/'/g, "\\'").replace(/"/g, "&quot;");
 }
