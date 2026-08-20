@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ArizkyMart POS Enterprise</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
 
-  <!-- HALAMAN LOGIN -->
+  <!-- HALAMAN LOGIN (Sembunyikan Hint Credential) -->
   <div id="loginScreen" class="login-overlay">
     <div class="login-box">
       <div class="login-header">
@@ -31,7 +32,7 @@
     </div>
   </div>
 
-  <!-- APLIKASI UTAMA -->
+  <!-- APLIKASI UTAMA (DASHBOARD) -->
   <div id="appDashboard" class="app-wrapper hidden">
     <!-- SIDEBAR NAVIGASI -->
     <aside class="sidebar">
@@ -40,19 +41,19 @@
         <span>ArizkyMart</span>
       </div>
       <nav class="sidebar-menu">
-        <button class="nav-item active" onclick="switchTab('tab-pos')">
+        <button class="nav-item active" onclick="switchTab('tab-pos', event)">
           <i class="fa-solid fa-cart-shopping"></i> <span>Kasir</span>
         </button>
-        <button class="nav-item" onclick="switchTab('tab-produk')">
+        <button class="nav-item" onclick="switchTab('tab-produk', event)">
           <i class="fa-solid fa-boxes-stacked"></i> <span>Stok Produk</span>
         </button>
-        <button class="nav-item" onclick="switchTab('tab-keuangan')">
+        <button class="nav-item" onclick="switchTab('tab-keuangan', event)">
           <i class="fa-solid fa-wallet"></i> <span>Manajemen Kas</span>
         </button>
-        <button class="nav-item" onclick="switchTab('tab-laporan')">
+        <button class="nav-item" onclick="switchTab('tab-laporan', event)">
           <i class="fa-solid fa-chart-line"></i> <span>Laporan Penjualan</span>
         </button>
-        <button class="nav-item" onclick="switchTab('tab-log')">
+        <button class="nav-item" onclick="switchTab('tab-log', event)">
           <i class="fa-solid fa-list-check"></i> <span>Log Aktivitas</span>
         </button>
       </nav>
@@ -65,7 +66,7 @@
 
     <!-- KONTEN UTAMA -->
     <div class="main-content">
-      <!-- TOPBAR SHIFT USER -->
+      <!-- HEADER TOPBAR KASIR -->
       <header class="topbar">
         <div class="topbar-title">
           <h2 id="pageTitle">Halaman Kasir</h2>
@@ -99,21 +100,25 @@
           <div class="stat-card">
             <i class="fa-solid fa-circle-dollar-to-slot icon-green"></i>
             <div>
-              <p>Omset Hari Ini</p>
+              <p>Omset Penjualan Hari Ini</p>
               <h3 id="statTodayIncome">Rp 0</h3>
             </div>
           </div>
         </div>
 
         <div class="pos-container">
+          <!-- GRID KATALOG -->
           <div class="pos-products card">
             <div class="search-bar">
               <i class="fa-solid fa-magnifying-glass"></i>
-              <input type="text" id="searchProduct" placeholder="Cari produk..." onkeyup="filterProducts()" />
+              <input type="text" id="searchProduct" placeholder="Cari nama atau ID produk..." onkeyup="filterProducts()" />
             </div>
-            <div id="productGrid" class="product-grid"></div>
+            <div id="productGrid" class="product-grid">
+              <!-- Render Produk via JS -->
+            </div>
           </div>
 
+          <!-- KERANJANG -->
           <div class="pos-cart card">
             <div class="card-title">
               <i class="fa-solid fa-basket-shopping"></i> Keranjang Belanja
@@ -121,7 +126,12 @@
             <div class="cart-items-wrapper">
               <table class="cart-table">
                 <thead>
-                  <tr><th>Item</th><th width="60">Qty</th><th>Total</th><th></th></tr>
+                  <tr>
+                    <th>Item</th>
+                    <th width="50">Qty</th>
+                    <th>Total</th>
+                    <th></th>
+                  </tr>
                 </thead>
                 <tbody id="cartTableBody">
                   <tr><td colspan="4" class="text-center">Keranjang Masih Kosong</td></tr>
@@ -174,7 +184,7 @@
                 <button type="submit" id="btnSave" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> Simpan & Potong Kas</button>
                 <button type="button" id="btnCancel" class="btn-cancel" onclick="resetProductForm()" style="display:none;">Batal</button>
               </div>
-              <small class="hint-text">*Menambah stok secara otomatis memotong Kas Toko berdasarkan Modal.</small>
+              <small class="hint-text">*Menambah produk baru otomatis memotong Kas Toko untuk modal awal.</small>
             </form>
           </div>
 
@@ -183,7 +193,13 @@
             <div class="table-responsive">
               <table class="data-table">
                 <thead>
-                  <tr><th>ID</th><th>Nama Produk</th><th>Harga</th><th>Stok</th><th>Aksi</th></tr>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nama Produk</th>
+                    <th>Harga</th>
+                    <th>Stok</th>
+                    <th>Aksi</th>
+                  </tr>
                 </thead>
                 <tbody id="productTableBody">
                   <tr><td colspan="5" class="text-center">Memuat data produk...</td></tr>
@@ -194,7 +210,7 @@
         </div>
       </div>
 
-      <!-- TAB 3: MANAJEMEN KEUANGAN / KAS -->
+      <!-- TAB 3: MANAJEMEN KEUANGAN / KAS TOKO -->
       <div id="tab-keuangan" class="tab-content">
         <div class="product-management-layout">
           <div class="card form-card">
@@ -203,8 +219,8 @@
               <div class="form-group">
                 <label>Jenis Transaksi Kas</label>
                 <select id="cashType" class="select-input">
-                  <option value="in">Pemasukan Kas (In)</option>
-                  <option value="out">Pengeluaran / Biaya (Out)</option>
+                  <option value="in">Pemasukan Kas (+)</option>
+                  <option value="out">Pengeluaran / Biaya (-)</option>
                 </select>
               </div>
               <div class="form-group">
@@ -212,10 +228,10 @@
                 <input type="number" id="cashAmount" placeholder="100000" min="1" required />
               </div>
               <div class="form-group">
-                <label>Keterangan</label>
-                <input type="text" id="cashNote" placeholder="Contoh: Tambah Modal / Bayar Listrik" required />
+                <label>Keterangan / Alasan</label>
+                <input type="text" id="cashNote" placeholder="Contoh: Tambah Modal / Beli Kantong Plastik" required />
               </div>
-              <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> Simpan Transaksi Kas</button>
+              <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> Simpan Kas</button>
             </form>
           </div>
 
@@ -224,7 +240,13 @@
             <div class="table-responsive">
               <table class="data-table">
                 <thead>
-                  <tr><th>Waktu</th><th>Jenis</th><th>Nominal</th><th>Keterangan</th><th>Kasir</th></tr>
+                  <tr>
+                    <th>Waktu</th>
+                    <th>Jenis</th>
+                    <th>Nominal</th>
+                    <th>Keterangan</th>
+                    <th>Kasir</th>
+                  </tr>
                 </thead>
                 <tbody id="cashTableBody">
                   <tr><td colspan="5" class="text-center">Belum ada riwayat kas</td></tr>
@@ -235,7 +257,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: LAPORAN PENJUALAN -->
+      <!-- TAB 4: LAPORAN PENJUALAN DETAIL -->
       <div id="tab-laporan" class="tab-content">
         <div class="card">
           <h3><i class="fa-solid fa-file-invoice-dollar"></i> Laporan Detail Penjualan</h3>
@@ -245,7 +267,7 @@
                 <tr>
                   <th>Waktu (WIB)</th>
                   <th>ID Transaksi</th>
-                  <th>Kasir (Shift)</th>
+                  <th>Shift Kasir</th>
                   <th>Barang Terjual</th>
                   <th>Total Bayar</th>
                 </tr>
@@ -258,14 +280,18 @@
         </div>
       </div>
 
-      <!-- TAB 5: LOG AKTIVITAS -->
+      <!-- TAB 5: AUDIT LOG AKTIVITAS -->
       <div id="tab-log" class="tab-content">
         <div class="card">
           <h3><i class="fa-solid fa-shield-cat"></i> Audit Log Aktivitas Sistem</h3>
           <div class="table-responsive">
             <table class="data-table">
               <thead>
-                <tr><th>Waktu</th><th>Kasir</th><th>Aktivitas / Operasi</th></tr>
+                <tr>
+                  <th>Waktu</th>
+                  <th>User Kasir</th>
+                  <th>Aktivitas / Operasi Sistem</th>
+                </tr>
               </thead>
               <tbody id="logTableBody">
                 <tr><td colspan="3" class="text-center">Belum ada aktivitas tercatat</td></tr>
@@ -278,6 +304,7 @@
     </div>
   </div>
 
+  <!-- AREA PRINT STRUK -->
   <div id="receiptPrintArea" class="receipt-print-area"></div>
 
   <!-- FIREBASE SDK -->
