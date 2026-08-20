@@ -1,4 +1,4 @@
-<!DOCTYlangtml>
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -9,6 +9,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Firebase SDK (Compat Version) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <style>
 :root{
@@ -784,11 +788,8 @@ body.dark th{
 <!-- ================= LOGIN ================= -->
 
 <div class="login-screen" id="loginScreen">
-
   <div class="login-card">
-
     <div class="logo-big">🏪</div>
-
     <h1>ArizkyMart</h1>
     <p>Point of Sale Management</p>
 
@@ -816,9 +817,7 @@ body.dark th{
       Demo Login<br>
       <b>admin</b> / <b>12345</b>
     </div>
-
   </div>
-
 </div>
 
 
@@ -829,7 +828,6 @@ body.dark th{
 <!-- SIDEBAR -->
 
 <aside class="sidebar" id="sidebar">
-
   <div class="brand">
     <div class="brand-icon">🏪</div>
     <div>
@@ -867,7 +865,6 @@ body.dark th{
       🚪 <span>Keluar</span>
     </div>
   </div>
-
 </aside>
 
 
@@ -876,42 +873,30 @@ body.dark th{
 <main class="main">
 
   <header class="topbar">
-
     <div class="top-left">
-
       <div style="display:flex;gap:10px;align-items:center">
-
         <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
-
         <div>
           <h1 id="pageTitle">Dashboard</h1>
           <p id="tanggal"></p>
         </div>
-
       </div>
-
     </div>
 
     <div class="user">
-
       <div class="user-info">
         <b id="userName">Admin</b>
         <small style="display:block;color:#64748b">Administrator</small>
       </div>
-
       <div class="avatar">A</div>
-
     </div>
-
   </header>
 
 
 <!-- ================= DASHBOARD ================= -->
 
 <section class="page active" id="dashboard">
-
   <div class="stats">
-
     <div class="stat blue">
       <div class="stat-icon">💰</div>
       <h4>Penjualan Hari Ini</h4>
@@ -935,97 +920,58 @@ body.dark th{
       <h4>Stok Menipis</h4>
       <strong id="stokMenipis">0</strong>
     </div>
-
   </div>
 
-
   <div class="dashboard-grid">
-
     <div class="card">
-
       <div class="card-title">
         <h3>📈 Grafik Penjualan</h3>
         <span style="font-size:11px;color:#64748b">7 Hari</span>
       </div>
-
       <div class="chart-box">
         <canvas id="grafik"></canvas>
       </div>
-
     </div>
 
-
     <div class="card">
-
       <div class="card-title">
         <h3>🔥 Produk Terlaris</h3>
       </div>
-
       <div id="produkTerlaris"></div>
-
     </div>
-
   </div>
-
 </section>
 
 
 <!-- ================= KASIR ================= -->
 
 <section class="page" id="kasir">
-
   <div class="cashier">
-
     <div class="card">
-
       <div class="card-title">
-
         <h3>🛒 Pilih Produk</h3>
-
-        <span id="jumlahProduk"
-              style="font-size:11px;color:#64748b">
-          0 produk
-        </span>
-
+        <span id="jumlahProduk" style="font-size:11px;color:#64748b">0 produk</span>
       </div>
 
       <div class="search">
-
         <span>🔍</span>
-
-        <input
-          class="input"
-          id="searchProduct"
-          placeholder="Cari produk..."
-          oninput="renderProducts()"
-        >
-
+        <input class="input" id="searchProduct" placeholder="Cari produk..." oninput="renderProducts()">
       </div>
 
       <div class="product-grid" id="productGrid"></div>
-
     </div>
-
 
     <!-- CART -->
 
     <div class="card cart">
-
       <div class="card-title">
-
         <h3>🛍️ Keranjang</h3>
-
-        <button class="btn btn-red btn-sm"
-                onclick="clearCart()">
-          Kosongkan
-        </button>
-
+        <button class="btn btn-red btn-sm" onclick="clearCart()">Kosongkan</button>
       </div>
 
       <div class="cart-items" id="cartItems"></div>
 
       <div class="cart-total">
-
         <div class="total-row">
           <span>Subtotal</span>
           <b id="subtotal">Rp0</b>
@@ -1041,43 +987,26 @@ body.dark th{
           <span id="cartTotal">Rp0</span>
         </div>
 
-        <button
-          class="btn btn-green"
-          style="width:100%;margin-top:15px;padding:14px"
-          onclick="openPayment()"
-        >
+        <button class="btn btn-green" style="width:100%;margin-top:15px;padding:14px" onclick="openPayment()">
           💳 BAYAR SEKARANG
         </button>
-
       </div>
-
     </div>
-
   </div>
-
 </section>
 
 
 <!-- ================= PRODUK ================= -->
 
 <section class="page" id="produk">
-
   <div class="card">
-
     <div class="card-title">
-
       <h3>📦 Manajemen Produk</h3>
-
-      <button class="btn" onclick="openProductModal()">
-        + Tambah Produk
-      </button>
-
+      <button class="btn" onclick="openProductModal()">+ Tambah Produk</button>
     </div>
 
     <div class="table-wrap">
-
       <table>
-
         <thead>
           <tr>
             <th>Produk</th>
@@ -1087,39 +1016,24 @@ body.dark th{
             <th>Aksi</th>
           </tr>
         </thead>
-
         <tbody id="productTable"></tbody>
-
       </table>
-
     </div>
-
   </div>
-
 </section>
 
 
 <!-- ================= LAPORAN ================= -->
 
 <section class="page" id="laporan">
-
   <div class="card">
-
     <div class="card-title">
-
       <h3>📜 Riwayat Transaksi</h3>
-
-      <button class="btn btn-red btn-sm"
-              onclick="clearTransactions()">
-        Hapus Riwayat
-      </button>
-
+      <button class="btn btn-red btn-sm" onclick="clearTransactions()">Hapus Riwayat</button>
     </div>
 
     <div class="table-wrap">
-
       <table>
-
         <thead>
           <tr>
             <th>No</th>
@@ -1129,37 +1043,23 @@ body.dark th{
             <th>Aksi</th>
           </tr>
         </thead>
-
         <tbody id="transactionTable"></tbody>
-
       </table>
-
     </div>
-
   </div>
-
 </section>
 
 </main>
-
 </div>
 
 
 <!-- ================= PRODUCT MODAL ================= -->
 
 <div class="modal" id="productModal">
-
   <div class="modal-box">
-
     <div class="modal-header">
-
       <h3 id="productModalTitle">Tambah Produk</h3>
-
-      <button class="close"
-              onclick="closeModal('productModal')">
-        ✕
-      </button>
-
+      <button class="close" onclick="closeModal('productModal')">✕</button>
     </div>
 
     <input type="hidden" id="editId">
@@ -1179,115 +1079,52 @@ body.dark th{
       <input class="input" id="productStock" type="number" placeholder="20">
     </div>
 
-    <button class="btn"
-            style="width:100%"
-            onclick="saveProduct()">
-      💾 Simpan Produk
-    </button>
-
+    <button class="btn" style="width:100%" onclick="saveProduct()">💾 Simpan Produk</button>
   </div>
-
 </div>
 
 
 <!-- ================= PAYMENT MODAL ================= -->
 
 <div class="modal" id="paymentModal">
-
   <div class="modal-box">
-
     <div class="modal-header">
-
       <h3>💳 Pembayaran</h3>
-
-      <button class="close"
-              onclick="closeModal('paymentModal')">
-        ✕
-      </button>
-
+      <button class="close" onclick="closeModal('paymentModal')">✕</button>
     </div>
 
     <div style="background:#eef2ff;padding:18px;border-radius:14px;text-align:center">
-
       <small>Total Pembayaran</small>
-
       <h1 id="paymentTotal">Rp0</h1>
-
     </div>
 
-    <label style="display:block;margin-top:15px;font-size:12px;font-weight:700">
-      Metode Pembayaran
-    </label>
+    <label style="display:block;margin-top:15px;font-size:12px;font-weight:700">Metode Pembayaran</label>
 
     <div class="payment-options">
-
-      <div class="payment active"
-           onclick="selectPayment('Cash',this)">
-        💵 Cash
-      </div>
-
-      <div class="payment"
-           onclick="selectPayment('QRIS',this)">
-        📱 QRIS
-      </div>
-
-      <div class="payment"
-           onclick="selectPayment('Transfer',this)">
-        🏦 Transfer
-      </div>
-
+      <div class="payment active" onclick="selectPayment('Cash',this)">💵 Cash</div>
+      <div class="payment" onclick="selectPayment('QRIS',this)">📱 QRIS</div>
+      <div class="payment" onclick="selectPayment('Transfer',this)">🏦 Transfer</div>
     </div>
 
     <div id="cashArea">
-
-      <label style="font-size:12px;font-weight:700">
-        Uang Diterima
-      </label>
-
-      <input
-        class="input"
-        id="cashInput"
-        type="number"
-        placeholder="Masukkan uang..."
-        oninput="calculateChange()"
-        style="margin-top:7px"
-      >
-
+      <label style="font-size:12px;font-weight:700">Uang Diterima</label>
+      <input class="input" id="cashInput" type="number" placeholder="Masukkan uang..." oninput="calculateChange()" style="margin-top:7px">
       <div class="change-box">
         <small>Kembalian</small>
         <h2 id="change">Rp0</h2>
       </div>
-
     </div>
 
-    <button
-      class="btn btn-green"
-      style="width:100%;margin-top:15px"
-      onclick="completePayment()"
-    >
+    <button class="btn btn-green" style="width:100%;margin-top:15px" onclick="completePayment()">
       ✓ SELESAIKAN TRANSAKSI
     </button>
-
   </div>
-
 </div>
 
 
 <!-- ================= RECEIPT ================= -->
 
-<div id="receipt"
-style="
-display:none;
-width:300px;
-font-family:monospace;
-font-size:12px;
-background:white;
-color:black;
-padding:15px;
-">
-
-</div>
-
+<div id="receipt" style="display:none;width:300px;font-family:monospace;font-size:12px;background:white;color:black;padding:15px;"></div>
 
 <div class="toast" id="toast"></div>
 
@@ -1295,1401 +1132,666 @@ padding:15px;
 <script>
 
 /* =====================================================
-   DATA
+   FIREBASE CONFIG & INITIALIZATION
 ===================================================== */
 
-let products =
-JSON.parse(localStorage.getItem("arizky_products")) || [
+const firebaseConfig = {
+  apiKey: "AIzaSyDL7E1lUagmRaSsOIQixcINfGX-wLjUysE",
+  authDomain: "arzmart-222af.firebaseapp.com",
+  databaseURL: "https://arzmart-222af-default-rtdb.firebaseio.com",
+  projectId: "arzmart-222af",
+  storageBucket: "arzmart-222af.firebasestorage.app",
+  messagingSenderId: "430534887642",
+  appId: "1:430534887642:web:ca78c52c9b524d45fd7de3",
+  measurementId: "G-RK7XJBS71Y"
+};
 
-  {
-    id:1,
-    name:"Aqua 600ml",
-    price:4000,
-    stock:20
-  },
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-  {
-    id:2,
-    name:"Teh Botol",
-    price:5000,
-    stock:15
-  },
 
-  {
-    id:3,
-    name:"Indomie Goreng",
-    price:3500,
-    stock:30
-  },
+/* =====================================================
+   DATA & VARIABLES
+===================================================== */
 
-  {
-    id:4,
-    name:"Kopi Sachet",
-    price:2500,
-    stock:25
-  },
-
-  {
-    id:5,
-    name:"Roti Coklat",
-    price:6000,
-    stock:12
-  },
-
-  {
-    id:6,
-    name:"Susu Kotak",
-    price:7000,
-    stock:10
-  }
-
+let products = [
+  { id: 1, name: "Aqua 600ml", price: 4000, stock: 20 },
+  { id: 2, name: "Teh Botol", price: 5000, stock: 15 },
+  { id: 3, name: "Indomie Goreng", price: 3500, stock: 30 },
+  { id: 4, name: "Kopi Sachet", price: 2500, stock: 25 },
+  { id: 5, name: "Roti Coklat", price: 6000, stock: 12 },
+  { id: 6, name: "Susu Kotak", price: 7000, stock: 10 }
 ];
 
-let transactions =
-JSON.parse(localStorage.getItem("arizky_transactions")) || [];
-
+let transactions = [];
 let cart = [];
-
 let paymentMethod = "Cash";
-
 let chart;
 
 
 /* =====================================================
-   STORAGE
+   FIREBASE REALTIME SINKRONISASI
 ===================================================== */
 
-function saveData(){
-
-  localStorage.setItem(
-    "arizky_products",
-    JSON.stringify(products)
-  );
-
-  localStorage.setItem(
-    "arizky_transactions",
-    JSON.stringify(transactions)
-  );
-
-}
-
-
-/* =====================================================
-   LOGIN
-===================================================== */
-
-function login(){
-
-  const username =
-  document.getElementById("username").value.trim();
-
-  const password =
-  document.getElementById("password").value;
-
-  if(username === "admin" && password === "12345"){
-
-    localStorage.setItem("arizky_login","true");
-
-    document.getElementById("loginScreen").style.display="none";
-    document.getElementById("app").style.display="block";
-
-    showToast("Selamat datang, Admin 👋");
-
-    init();
-
-  }else{
-
-    showToast("Username atau password salah ❌");
-
+// Read Live Products dari Cloud Firebase
+db.ref("products").on("value", (snapshot) => {
+  const data = snapshot.val();
+  if (data) {
+    products = Object.values(data);
+  } else {
+    // Jika database online masih kosong, inisialisasi data bawaan
+    saveProductsToCloud();
   }
+  refreshCurrentUI();
+});
 
+// Read Live Transactions dari Cloud Firebase
+db.ref("transactions").on("value", (snapshot) => {
+  const data = snapshot.val();
+  if (data) {
+    transactions = Object.values(data);
+  } else {
+    transactions = [];
+  }
+  refreshCurrentUI();
+});
+
+function saveData() {
+  saveProductsToCloud();
+  saveTransactionsToCloud();
 }
 
-function logout(){
+function saveProductsToCloud() {
+  const productObj = {};
+  products.forEach(p => productObj[p.id] = p);
+  db.ref("products").set(productObj);
+}
 
-  localStorage.removeItem("arizky_login");
+function saveTransactionsToCloud() {
+  const transObj = {};
+  transactions.forEach(t => transObj[t.id] = t);
+  db.ref("transactions").set(transObj);
+}
 
-  location.reload();
-
+function refreshCurrentUI() {
+  renderProducts();
+  renderCart();
+  updateDashboard();
+  renderProductTable();
+  renderTransactions();
 }
 
 
 /* =====================================================
-   PAGE
+   HELPER / UTILS
 ===================================================== */
 
-function showPage(id, element){
+function formatRp(val) {
+  return "Rp" + Number(val || 0).toLocaleString("id-ID");
+}
 
-  document.querySelectorAll(".page")
-  .forEach(p=>p.classList.remove("active"));
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.innerText = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
 
-  document.getElementById(id)
-  .classList.add("active");
+function closeModal(id) {
+  document.getElementById(id).classList.remove("show");
+}
 
-  document.querySelectorAll(".nav")
-  .forEach(n=>n.classList.remove("active"));
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("open");
+}
 
-  if(element)
-    element.classList.add("active");
+function toggleDark() {
+  document.body.classList.toggle("dark");
+}
+
+
+/* =====================================================
+   INIT & LOGIN
+===================================================== */
+
+function init() {
+  const now = new Date();
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  document.getElementById("tanggal").innerText = now.toLocaleDateString('id-ID', options);
+  refreshCurrentUI();
+}
+
+function login() {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value;
+
+  if (username === "admin" && password === "12345") {
+    localStorage.setItem("arizky_login", "true");
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    showToast("Selamat datang, Admin 👋");
+    init();
+  } else {
+    showToast("Username atau password salah ❌");
+  }
+}
+
+function logout() {
+  localStorage.removeItem("arizky_login");
+  location.reload();
+}
+
+// Auto Login check
+window.addEventListener("DOMContentLoaded", () => {
+  if (localStorage.getItem("arizky_login") === "true") {
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    init();
+  }
+});
+
+
+/* =====================================================
+   PAGE NAVIGATION
+===================================================== */
+
+function showPage(id, element) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+
+  document.querySelectorAll(".nav").forEach(n => n.classList.remove("active"));
+  if (element) element.classList.add("active");
 
   const titles = {
-    dashboard:"Dashboard",
-    kasir:"Kasir",
-    produk:"Produk",
-    laporan:"Laporan"
+    dashboard: "Dashboard",
+    kasir: "Kasir",
+    produk: "Produk",
+    laporan: "Laporan"
   };
 
-  document.getElementById("pageTitle")
-  .innerText = titles[id];
+  document.getElementById("pageTitle").innerText = titles[id];
 
-  if(id === "dashboard")
-    updateDashboard();
+  if (id === "dashboard") updateDashboard();
+  if (id === "produk") renderProductTable();
+  if (id === "laporan") renderTransactions();
 
-  if(id === "produk")
-    renderProductTable();
-
-  if(id === "laporan")
-    renderTransactions();
-
-  if(window.innerWidth < 700)
-    document.getElementById("sidebar")
-    .classList.remove("open");
-
+  if (window.innerWidth < 700) {
+    document.getElementById("sidebar").classList.remove("open");
+  }
 }
 
 
 /* =====================================================
-   PRODUCTS
+   PRODUCTS MANAGEMENT
 ===================================================== */
 
-function renderProducts(){
+function renderProducts() {
+  const grid = document.getElementById("productGrid");
+  if (!grid) return;
 
-  const grid =
-  document.getElementById("productGrid");
+  const keyword = (document.getElementById("searchProduct")?.value || "").toLowerCase();
+  const filtered = products.filter(p => p.name.toLowerCase().includes(keyword));
 
-  const keyword =
-  document.getElementById("searchProduct")
-  .value.toLowerCase();
+  document.getElementById("jumlahProduk").innerText = filtered.length + " produk";
+  grid.innerHTML = "";
 
-  const filtered =
-  products.filter(p =>
-    p.name.toLowerCase().includes(keyword)
-  );
-
-  document.getElementById("jumlahProduk")
-  .innerText = filtered.length + " produk";
-
-  grid.innerHTML="";
-
-  filtered.forEach(p=>{
-
+  filtered.forEach(p => {
     const disabled = p.stock <= 0;
-
     grid.innerHTML += `
-
-      <div
-        class="product"
-        onclick="${disabled ? "" : `addToCart(${p.id})`}"
-        style="${disabled ? "opacity:.5;cursor:not-allowed" : ""}"
-      >
-
-        <div class="product-icon">
-          ${getProductIcon(p.name)}
-        </div>
-
-        <div class="product-name">
-          ${p.name}
-        </div>
-
-        <div class="product-price">
-          ${formatRp(p.price)}
-        </div>
-
-        <div class="stock">
-          ${p.stock > 0 ? "Stok " + p.stock : "STOK HABIS"}
-        </div>
-
+      <div class="product" onclick="${disabled ? "" : `addToCart(${p.id})`}" style="${disabled ? "opacity:.5;cursor:not-allowed" : ""}">
+        <div class="product-icon">${getProductIcon(p.name)}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-price">${formatRp(p.price)}</div>
+        <div class="stock">${p.stock > 0 ? "Stok " + p.stock : "STOK HABIS"}</div>
       </div>
-
     `;
-
   });
-
 }
 
-
-function getProductIcon(name){
-
-  name=name.toLowerCase();
-
-  if(name.includes("aqua") ||
-     name.includes("air"))
-    return "💧";
-
-  if(name.includes("teh"))
-    return "🧃";
-
-  if(name.includes("kopi"))
-    return "☕";
-
-  if(name.includes("roti"))
-    return "🍞";
-
-  if(name.includes("susu"))
-    return "🥛";
-
-  if(name.includes("indomie") ||
-     name.includes("mie"))
-    return "🍜";
-
+function getProductIcon(name) {
+  name = name.toLowerCase();
+  if (name.includes("aqua") || name.includes("air")) return "💧";
+  if (name.includes("teh")) return "🧃";
+  if (name.includes("kopi")) return "☕";
+  if (name.includes("roti")) return "🍞";
+  if (name.includes("susu")) return "🥛";
+  if (name.includes("indomie") || name.includes("mie")) return "🍜";
   return "📦";
+}
 
+function renderProductTable() {
+  const tbody = document.getElementById("productTable");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+
+  products.forEach(p => {
+    const status = p.stock > 5 ? `<span style="color:var(--success)">Tersedia</span>` : p.stock > 0 ? `<span style="color:var(--warning)">Menipis</span>` : `<span style="color:var(--danger)">Habis</span>`;
+    tbody.innerHTML += `
+      <tr>
+        <td><b>${p.name}</b></td>
+        <td>${formatRp(p.price)}</td>
+        <td>${p.stock}</td>
+        <td>${status}</td>
+        <td>
+          <button class="btn btn-orange btn-sm" onclick="editProductModal(${p.id})">✏️ Edit</button>
+          <button class="btn btn-red btn-sm" onclick="deleteProduct(${p.id})">🗑️ Hapus</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+function openProductModal() {
+  document.getElementById("editId").value = "";
+  document.getElementById("productName").value = "";
+  document.getElementById("productPrice").value = "";
+  document.getElementById("productStock").value = "";
+  document.getElementById("productModalTitle").innerText = "Tambah Produk";
+  document.getElementById("productModal").classList.add("show");
+}
+
+function editProductModal(id) {
+  const p = products.find(prod => prod.id === id);
+  if (!p) return;
+  document.getElementById("editId").value = p.id;
+  document.getElementById("productName").value = p.name;
+  document.getElementById("productPrice").value = p.price;
+  document.getElementById("productStock").value = p.stock;
+  document.getElementById("productModalTitle").innerText = "Edit Produk";
+  document.getElementById("productModal").classList.add("show");
+}
+
+function saveProduct() {
+  const editId = document.getElementById("editId").value;
+  const name = document.getElementById("productName").value.trim();
+  const price = Number(document.getElementById("productPrice").value) || 0;
+  const stock = Number(document.getElementById("productStock").value) || 0;
+
+  if (!name || price <= 0) {
+    showToast("Isi nama dan harga produk dengan benar!");
+    return;
+  }
+
+  if (editId) {
+    const p = products.find(prod => prod.id == editId);
+    if (p) {
+      p.name = name;
+      p.price = price;
+      p.stock = stock;
+    }
+  } else {
+    const newId = Date.now();
+    products.push({ id: newId, name, price, stock });
+  }
+
+  saveProductsToCloud();
+  closeModal("productModal");
+  showToast("Produk tersimpan ✓");
+}
+
+function deleteProduct(id) {
+  if (confirm("Apakah kamu yakin ingin menghapus produk ini?")) {
+    products = products.filter(p => p.id !== id);
+    db.ref("products/" + id).remove();
+    showToast("Produk dihapus");
+  }
 }
 
 
 /* =====================================================
-   CART
+   CART MANAGEMENT
 ===================================================== */
 
-function addToCart(id){
-
-  const product =
-  products.find(p=>p.id===id);
-
-  if(!product || product.stock <= 0){
-
+function addToCart(id) {
+  const product = products.find(p => p.id === id);
+  if (!product || product.stock <= 0) {
     showToast("Stok habis!");
-
     return;
-
   }
 
-  const item =
-  cart.find(i=>i.id===id);
-
-  if(item){
-
-    if(item.qty >= product.stock){
-
+  const item = cart.find(i => i.id === id);
+  if (item) {
+    if (item.qty >= product.stock) {
       showToast("Stok tidak mencukupi!");
-
       return;
-
     }
-
     item.qty++;
-
-  }else{
-
-    cart.push({
-      id:product.id,
-      name:product.name,
-      price:product.price,
-      qty:1
-    });
-
+  } else {
+    cart.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
   }
-
   renderCart();
-
 }
 
+function changeQty(id, amount) {
+  const item = cart.find(i => i.id === id);
+  if (!item) return;
 
-function changeQty(id, amount){
-
-  const item =
-  cart.find(i=>i.id===id);
-
-  if(!item) return;
-
-  const product =
-  products.find(p=>p.id===id);
-
+  const product = products.find(p => p.id === id);
   item.qty += amount;
 
-  if(item.qty <= 0){
-
-    cart =
-    cart.filter(i=>i.id!==id);
-
-  }
-
-  if(item.qty > product.stock){
-
-    item.qty=product.stock;
-
+  if (item.qty <= 0) {
+    cart = cart.filter(i => i.id !== id);
+  } else if (product && item.qty > product.stock) {
+    item.qty = product.stock;
     showToast("Jumlah melebihi stok!");
-
   }
-
   renderCart();
-
 }
 
-
-function removeCart(id){
-
-  cart =
-  cart.filter(i=>i.id!==id);
-
+function removeCart(id) {
+  cart = cart.filter(i => i.id !== id);
   renderCart();
-
 }
 
-
-function clearCart(){
-
-  if(cart.length===0)
-    return;
-
-  cart=[];
-
+function clearCart() {
+  if (cart.length === 0) return;
+  cart = [];
   renderCart();
-
   showToast("Keranjang dikosongkan");
-
 }
 
-
-function getSubtotal(){
-
-  return cart.reduce(
-    (sum,item)=>
-    sum + item.price * item.qty,
-    0
-  );
-
+function getSubtotal() {
+  return cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 }
 
+function renderCart() {
+  const container = document.getElementById("cartItems");
+  if (!container) return;
+  container.innerHTML = "";
 
-function renderCart(){
-
-  const container =
-  document.getElementById("cartItems");
-
-  container.innerHTML="";
-
-  if(cart.length===0){
-
-    container.innerHTML=`
-
-      <div style="
-        text-align:center;
-        padding:50px 10px;
-        color:#94a3b8
-      ">
-
+  if (cart.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:50px 10px;color:#94a3b8">
         <div style="font-size:45px">🛍️</div>
-
-        <p style="margin-top:10px">
-          Keranjang masih kosong
-        </p>
-
+        <p style="margin-top:10px">Keranjang masih kosong</p>
       </div>
-
     `;
-
   }
 
-  cart.forEach(item=>{
-
+  cart.forEach(item => {
     container.innerHTML += `
-
       <div class="cart-item">
-
-        <div style="
-          width:40px;
-          height:40px;
-          border-radius:10px;
-          background:#eef2ff;
-          display:flex;
-          align-items:center;
-          justify-content:center
-        ">
+        <div style="width:40px;height:40px;border-radius:10px;background:#eef2ff;display:flex;align-items:center;justify-content:center">
           ${getProductIcon(item.name)}
         </div>
-
         <div class="cart-item-info">
-
-          <div class="cart-item-name">
-            ${item.name}
-          </div>
-
-          <div class="cart-item-price">
-            ${formatRp(item.price)}
-          </div>
-
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-price">${formatRp(item.price)}</div>
           <div class="qty">
-
-            <button onclick="changeQty(${item.id},-1)">
-              −
-            </button>
-
-            <b style="font-size:12px">
-              ${item.qty}
-            </b>
-
-            <button onclick="changeQty(${item.id},1)">
-              +
-            </button>
-
-            <button
-              onclick="removeCart(${item.id})"
-              style="
-                margin-left:5px;
-                background:#fee2e2;
-                color:#ef4444
-              "
-            >
-              🗑
-            </button>
-
+            <button onclick="changeQty(${item.id},-1)">−</button>
+            <b style="font-size:12px">${item.qty}</b>
+            <button onclick="changeQty(${item.id},1)">+</button>
+            <button onclick="removeCart(${item.id})" style="margin-left:5px;background:#fee2e2;color:#ef4444">🗑</button>
           </div>
-
         </div>
-
-        <b style="font-size:12px">
-          ${formatRp(item.price * item.qty)}
-        </b>
-
+        <b style="font-size:12px">${formatRp(item.price * item.qty)}</b>
       </div>
-
     `;
-
   });
 
   const subtotal = getSubtotal();
-
-  document.getElementById("subtotal")
-  .innerText = formatRp(subtotal);
-
-  document.getElementById("diskon")
-  .innerText = formatRp(0);
-
-  document.getElementById("cartTotal")
-  .innerText = formatRp(subtotal);
-
+  document.getElementById("subtotal").innerText = formatRp(subtotal);
+  document.getElementById("diskon").innerText = formatRp(0);
+  document.getElementById("cartTotal").innerText = formatRp(subtotal);
 }
 
 
 /* =====================================================
-   PAYMENT
+   PAYMENT & TRANSACTIONS
 ===================================================== */
 
-function openPayment(){
-
-  if(cart.length===0){
-
+function openPayment() {
+  if (cart.length === 0) {
     showToast("Keranjang masih kosong!");
-
     return;
-
   }
-
-  const total=getSubtotal();
-
-  document.getElementById("paymentTotal")
-  .innerText=formatRp(total);
-
-  document.getElementById("cashInput")
-  .value="";
-
-  document.getElementById("change")
-  .innerText="Rp0";
-
-  document.getElementById("paymentModal")
-  .classList.add("show");
-
+  const total = getSubtotal();
+  document.getElementById("paymentTotal").innerText = formatRp(total);
+  document.getElementById("cashInput").value = "";
+  document.getElementById("change").innerText = "Rp0";
+  document.getElementById("paymentModal").classList.add("show");
 }
 
-
-function selectPayment(method, element){
-
-  paymentMethod=method;
-
-  document.querySelectorAll(".payment")
-  .forEach(p=>p.classList.remove("active"));
-
+function selectPayment(method, element) {
+  paymentMethod = method;
+  document.querySelectorAll(".payment").forEach(p => p.classList.remove("active"));
   element.classList.add("active");
-
-  document.getElementById("cashArea")
-  .style.display =
-  method==="Cash" ? "block" : "none";
-
+  document.getElementById("cashArea").style.display = method === "Cash" ? "block" : "none";
 }
 
-
-function calculateChange(){
-
-  const total=getSubtotal();
-
-  const cash=
-  Number(document.getElementById("cashInput").value)||0;
-
-  const change=
-  cash-total;
-
-  document.getElementById("change")
-  .innerText =
-  formatRp(Math.max(0,change));
-
+function calculateChange() {
+  const total = getSubtotal();
+  const cash = Number(document.getElementById("cashInput").value) || 0;
+  const change = cash - total;
+  document.getElementById("change").innerText = formatRp(Math.max(0, change));
 }
 
+function completePayment() {
+  const total = getSubtotal();
+  let cash = total;
 
-function completePayment(){
-
-  const total=getSubtotal();
-
-  let cash=total;
-
-  if(paymentMethod==="Cash"){
-
-    cash=
-    Number(document.getElementById("cashInput").value)||0;
-
-    if(cash < total){
-
+  if (paymentMethod === "Cash") {
+    cash = Number(document.getElementById("cashInput").value) || 0;
+    if (cash < total) {
       showToast("Uang pembayaran kurang!");
-
       return;
-
     }
-
   }
 
-  /* kurangi stok setelah pembayaran berhasil */
-
-  cart.forEach(item=>{
-
-    const product =
-    products.find(p=>p.id===item.id);
-
-    if(product)
-      product.stock -= item.qty;
-
+  // Kurangi stok produk
+  cart.forEach(item => {
+    const product = products.find(p => p.id === item.id);
+    if (product) product.stock -= item.qty;
   });
 
-
-  const transaction={
-
-    id:Date.now(),
-
-    date:new Date().toISOString(),
-
-    displayDate:new Date()
-      .toLocaleString("id-ID"),
-
-    items:JSON.parse(JSON.stringify(cart)),
-
-    total:total,
-
-    payment:paymentMethod,
-
-    cash:cash,
-
-    change:
-      paymentMethod==="Cash"
-      ? cash-total
-      : 0
-
+  const transaction = {
+    id: Date.now(),
+    date: new Date().toISOString(),
+    displayDate: new Date().toLocaleString("id-ID"),
+    items: JSON.parse(JSON.stringify(cart)),
+    total: total,
+    payment: paymentMethod,
+    cash: cash,
+    change: paymentMethod === "Cash" ? cash - total : 0
   };
-
 
   transactions.push(transaction);
 
+  // Simpan perubahan produk dan transaksi langsung ke Firebase Cloud
   saveData();
 
   closeModal("paymentModal");
-
   printReceipt(transaction);
 
-  cart=[];
-
+  cart = [];
   renderCart();
-
   renderProducts();
-
   updateDashboard();
-
   showToast("Transaksi berhasil ✓");
-
 }
 
-
-/* =====================================================
-   RECEIPT
-===================================================== */
-
-function printReceipt(t){
-
-  const receipt =
-  document.getElementById("receipt");
-
-  let html=`
-
+function printReceipt(t) {
+  const receipt = document.getElementById("receipt");
+  let html = `
     <div style="text-align:center">
-
       <h2>ARIZKYMART</h2>
-
       <p>POINT OF SALE</p>
-
       <p>Bondowoso, Jawa Timur</p>
-
     </div>
-
     <hr>
-
     <p>No: ${t.id}</p>
-
     <p>${t.displayDate}</p>
-
     <p>Bayar: ${t.payment}</p>
-
     <hr>
-
   `;
 
-  t.items.forEach(item=>{
-
-    html+=`
-
-      <div style="
-        display:flex;
-        justify-content:space-between;
-        margin:5px 0
-      ">
-
-        <span>
-          ${item.name} x${item.qty}
-        </span>
-
-        <span>
-          ${formatRp(item.price*item.qty)}
-        </span>
-
+  t.items.forEach(item => {
+    html += `
+      <div style="display:flex;justify-content:space-between;margin:5px 0">
+        <span>${item.name} x${item.qty}</span>
+        <span>${formatRp(item.price * item.qty)}</span>
       </div>
-
     `;
-
   });
 
-  html+=`
-
+  html += `
     <hr>
-
-    <div style="
-      display:flex;
-      justify-content:space-between
-    ">
+    <div style="display:flex;justify-content:space-between">
       <b>TOTAL</b>
       <b>${formatRp(t.total)}</b>
     </div>
-
-    <div style="
-      display:flex;
-      justify-content:space-between
-    ">
+    <div style="display:flex;justify-content:space-between">
       <span>Bayar</span>
       <span>${formatRp(t.cash)}</span>
     </div>
-
-    <div style="
-      display:flex;
-      justify-content:space-between
-    ">
+    <div style="display:flex;justify-content:space-between">
       <span>Kembali</span>
       <span>${formatRp(t.change)}</span>
     </div>
-
     <hr>
-
-    <p style="text-align:center">
-      Terima kasih telah berbelanja ❤️
-    </p>
-
+    <p style="text-align:center">Terima kasih telah berbelanja!</p>
   `;
 
-  receipt.innerHTML=html;
+  receipt.innerHTML = html;
+  receipt.style.display = "block";
 
-  window.print();
-
+  setTimeout(() => {
+    window.print();
+    receipt.style.display = "none";
+  }, 300);
 }
 
+function renderTransactions() {
+  const tbody = document.getElementById("transactionTable");
+  if (!tbody) return;
+  tbody.innerHTML = "";
 
-/* =====================================================
-   PRODUCT MANAGEMENT
-===================================================== */
-
-function openProductModal(id=null){
-
-  document.getElementById("editId").value="";
-
-  document.getElementById("productName").value="";
-  document.getElementById("productPrice").value="";
-  document.getElementById("productStock").value="";
-
-  document.getElementById("productModalTitle")
-  .innerText="Tambah Produk";
-
-  if(id){
-
-    const p =
-    products.find(x=>x.id===id);
-
-    if(!p) return;
-
-    document.getElementById("editId").value=p.id;
-
-    document.getElementById("productName").value=p.name;
-
-    document.getElementById("productPrice").value=p.price;
-
-    document.getElementById("productStock").value=p.stock;
-
-    document.getElementById("productModalTitle")
-    .innerText="Edit Produk";
-
-  }
-
-  document.getElementById("productModal")
-  .classList.add("show");
-
-}
-
-
-function saveProduct(){
-
-  const id=
-  Number(document.getElementById("editId").value);
-
-  const name=
-  document.getElementById("productName").value.trim();
-
-  const price=
-  Number(document.getElementById("productPrice").value);
-
-  const stock=
-  Number(document.getElementById("productStock").value);
-
-  if(!name || price<=0 || stock<0){
-
-    showToast("Data produk belum lengkap!");
-
+  if (transactions.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#94a3b8">Belum ada riwayat transaksi.</td></tr>`;
     return;
-
   }
 
-  if(id){
-
-    const p =
-    products.find(x=>x.id===id);
-
-    p.name=name;
-    p.price=price;
-    p.stock=stock;
-
-    showToast("Produk berhasil diperbarui ✓");
-
-  }else{
-
-    products.push({
-
-      id:Date.now(),
-
-      name:name,
-
-      price:price,
-
-      stock:stock
-
-    });
-
-    showToast("Produk berhasil ditambahkan ✓");
-
-  }
-
-  saveData();
-
-  closeModal("productModal");
-
-  renderProducts();
-
-  renderProductTable();
-
-  updateDashboard();
-
-}
-
-
-function deleteProduct(id){
-
-  const product =
-  products.find(p=>p.id===id);
-
-  if(!product) return;
-
-  if(!confirm(
-    `Hapus produk "${product.name}"?`
-  )) return;
-
-  products =
-  products.filter(p=>p.id!==id);
-
-  saveData();
-
-  renderProductTable();
-
-  renderProducts();
-
-  updateDashboard();
-
-  showToast("Produk dihapus");
-
-}
-
-
-function renderProductTable(){
-
-  const tbody =
-  document.getElementById("productTable");
-
-  tbody.innerHTML="";
-
-  products.forEach(p=>{
-
-    let status="Aman";
-    let color="#10b981";
-
-    if(p.stock===0){
-
-      status="Habis";
-      color="#ef4444";
-
-    }else if(p.stock<5){
-
-      status="Menipis";
-      color="#f59e0b";
-
-    }
-
-    tbody.innerHTML+=`
-
+  transactions.slice().reverse().forEach((t, index) => {
+    tbody.innerHTML += `
       <tr>
-
-        <td>
-          <b>${getProductIcon(p.name)} ${p.name}</b>
-        </td>
-
-        <td>${formatRp(p.price)}</td>
-
-        <td><b>${p.stock}</b></td>
-
-        <td>
-          <span style="
-            background:${color}18;
-            color:${color};
-            padding:5px 9px;
-            border-radius:8px;
-            font-size:10px;
-            font-weight:800
-          ">
-            ${status}
-          </span>
-        </td>
-
-        <td>
-
-          <button
-            class="btn btn-orange btn-sm"
-            onclick="openProductModal(${p.id})"
-          >
-            ✏️
-          </button>
-
-          <button
-            class="btn btn-red btn-sm"
-            onclick="deleteProduct(${p.id})"
-          >
-            🗑
-          </button>
-
-        </td>
-
-      </tr>
-
-    `;
-
-  });
-
-}
-
-
-/* =====================================================
-   TRANSACTIONS
-===================================================== */
-
-function renderTransactions(){
-
-  const tbody =
-  document.getElementById("transactionTable");
-
-  tbody.innerHTML="";
-
-  if(transactions.length===0){
-
-    tbody.innerHTML=`
-
-      <tr>
-        <td colspan="5"
-            style="text-align:center;color:#94a3b8">
-          Belum ada transaksi
-        </td>
-      </tr>
-
-    `;
-
-    return;
-
-  }
-
-  transactions
-  .slice()
-  .reverse()
-  .forEach((t,index)=>{
-
-    tbody.innerHTML+=`
-
-      <tr>
-
-        <td>#${transactions.length-index}</td>
-
+        <td>${transactions.length - index}</td>
         <td>${t.displayDate}</td>
-
-        <td>${t.payment}</td>
-
-        <td>
-          <b>${formatRp(t.total)}</b>
-        </td>
-
-        <td>
-
-          <button
-            class="btn btn-sm"
-            onclick='printReceipt(${JSON.stringify(t)})'
-          >
-            🧾 Cetak
-          </button>
-
-        </td>
-
+        <td><span style="background:#eef2ff;color:#4f46e5;padding:3px 8px;border-radius:6px;font-size:11px">${t.payment}</span></td>
+        <td><b>${formatRp(t.total)}</b></td>
+        <td><button class="btn btn-gray btn-sm" onclick='printReceipt(${JSON.stringify(t)})'>🖨️ Cetak</button></td>
       </tr>
-
     `;
-
   });
-
 }
 
-
-function clearTransactions(){
-
-  if(!transactions.length)
-    return;
-
-  if(!confirm(
-    "Hapus semua riwayat transaksi?"
-  )) return;
-
-  transactions=[];
-
-  saveData();
-
-  renderTransactions();
-
-  updateDashboard();
-
-  showToast("Riwayat transaksi dihapus");
-
+function clearTransactions() {
+  if (confirm("Apakah Anda yakin ingin menghapus semua riwayat transaksi?")) {
+    transactions = [];
+    db.ref("transactions").remove();
+    renderTransactions();
+    updateDashboard();
+    showToast("Riwayat transaksi berhasil dihapus");
+  }
 }
 
 
 /* =====================================================
-   DASHBOARD
+   DASHBOARD & STATS
 ===================================================== */
 
-function updateDashboard(){
+function updateDashboard() {
+  const todayStr = new Date().toLocaleDateString("id-ID");
 
-  const today =
-  new Date().toDateString();
+  const todayTrans = transactions.filter(t => new Date(t.date).toLocaleDateString("id-ID") === todayStr);
 
-  const todayTransactions =
-  transactions.filter(t =>
-    new Date(t.date).toDateString()===today
-  );
+  const totalSalesToday = todayTrans.reduce((sum, t) => sum + t.total, 0);
+  const totalItemsSold = transactions.reduce((sum, t) => sum + t.items.reduce((iSum, i) => iSum + i.qty, 0), 0);
+  const lowStockCount = products.filter(p => p.stock <= 5).length;
 
-  const sales =
-  todayTransactions.reduce(
-    (sum,t)=>sum+t.total,
-    0
-  );
+  document.getElementById("jualHariIni").innerText = formatRp(totalSalesToday);
+  document.getElementById("totalTransaksi").innerText = transactions.length;
+  document.getElementById("produkTerjual").innerText = totalItemsSold;
+  document.getElementById("stokMenipis").innerText = lowStockCount;
 
-  const sold =
-  transactions.reduce(
-    (sum,t)=>
-      sum+t.items.reduce(
-        (x,i)=>x+i.qty,
-        0
-      ),
-    0
-  );
-
-  const lowStock =
-  products.filter(p=>p.stock<5).length;
-
-  document.getElementById("jualHariIni")
-  .innerText=formatRp(sales);
-
-  document.getElementById("totalTransaksi")
-  .innerText=transactions.length;
-
-  document.getElementById("produkTerjual")
-  .innerText=sold;
-
-  document.getElementById("stokMenipis")
-  .innerText=lowStock;
-
-  renderBestProducts();
-
-  updateChart();
-
+  renderTopProducts();
+  renderChart();
 }
 
+function renderTopProducts() {
+  const container = document.getElementById("produkTerlaris");
+  if (!container) return;
 
-function renderBestProducts(){
-
-  const box =
-  document.getElementById("produkTerlaris");
-
-  const map={};
-
-  transactions.forEach(t=>{
-
-    t.items.forEach(item=>{
-
-      map[item.name] =
-      (map[item.name]||0)+item.qty;
-
+  const soldMap = {};
+  transactions.forEach(t => {
+    t.items.forEach(item => {
+      soldMap[item.name] = (soldMap[item.name] || 0) + item.qty;
     });
-
   });
 
-  const sorted =
-  Object.entries(map)
-  .sort((a,b)=>b[1]-a[1])
-  .slice(0,5);
+  const sorted = Object.keys(soldMap).map(name => ({ name, qty: soldMap[name] })).sort((a, b) => b.qty - a.qty).slice(0, 5);
 
-  box.innerHTML="";
-
-  if(sorted.length===0){
-
-    box.innerHTML=`
-
-      <div style="
-        text-align:center;
-        padding:40px 10px;
-        color:#94a3b8
-      ">
-        Belum ada data penjualan
-      </div>
-
-    `;
-
+  container.innerHTML = "";
+  if (sorted.length === 0) {
+    container.innerHTML = `<p style="font-size:12px;color:#94a3b8;text-align:center">Belum ada data penjualan</p>`;
     return;
-
   }
 
-  sorted.forEach((item,index)=>{
-
-    box.innerHTML+=`
-
-      <div style="
-        display:flex;
-        align-items:center;
-        gap:10px;
-        padding:12px 0;
-        border-bottom:1px solid var(--border)
-      ">
-
-        <div style="
-          width:35px;
-          height:35px;
-          border-radius:10px;
-          background:#eef2ff;
-          display:flex;
-          align-items:center;
-          justify-content:center
-        ">
-          ${index+1}
-        </div>
-
-        <div style="flex:1">
-
-          <b style="font-size:12px">
-            ${item[0]}
-          </b>
-
-          <small style="
-            display:block;
-            color:#64748b;
-            margin-top:3px
-          ">
-            ${item[1]} terjual
-          </small>
-
-        </div>
-
-        <span>🔥</span>
-
+  sorted.forEach(item => {
+    container.innerHTML += `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--border)">
+        <span style="font-size:13px font-weight:600">${item.name}</span>
+        <b style="font-size:12px;color:var(--primary)">${item.qty} terjual</b>
       </div>
-
     `;
-
   });
-
 }
 
+function renderChart() {
+  const ctx = document.getElementById("grafik")?.getContext("2d");
+  if (!ctx) return;
 
-/* =====================================================
-   CHART
-===================================================== */
+  const labels = [];
+  const salesData = [];
 
-function updateChart(){
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toLocaleDateString("id-ID");
+    labels.push(d.toLocaleDateString("id-ID", { weekday: 'short' }));
 
-  const labels=[];
-  const data=[];
+    const dayTotal = transactions
+      .filter(t => new Date(t.date).toLocaleDateString("id-ID") === dateStr)
+      .reduce((sum, t) => sum + t.total, 0);
 
-  for(let i=6;i>=0;i--){
-
-    const date=new Date();
-
-    date.setDate(date.getDate()-i);
-
-    labels.push(
-      date.toLocaleDateString("id-ID",{
-        weekday:"short"
-      })
-    );
-
-    const key=date.toDateString();
-
-    const total=
-      transactions
-      .filter(t =>
-        new Date(t.date).toDateString()===key
-      )
-      .reduce(
-        (sum,t)=>sum+t.total,
-        0
-      );
-
-    data.push(total);
-
+    salesData.push(dayTotal);
   }
 
-  if(chart)
-    chart.destroy();
+  if (chart) chart.destroy();
 
-  chart =
-  new Chart(
-    document.getElementById("grafik"),
-    {
-
-      type:"line",
-
-      data:{
-
-        labels:labels,
-
-        datasets:[{
-
-          label:"Penjualan",
-
-          data:data,
-
-          borderColor:"#6366f1",
-
-          backgroundColor:
-            "rgba(99,102,241,.12)",
-
-          fill:true,
-
-          tension:.4,
-
-          pointRadius:4,
-
-          pointBackgroundColor:"#6366f1"
-
-        }]
-
-      },
-
-      options:{
-
-        responsive:true,
-
-        maintainAspectRatio:false,
-
-        plugins:{
-          legend:{
-            display:false
-          }
-        },
-
-        scales:{
-
-          y:{
-            beginAtZero:true,
-
-            ticks:{
-              callback:function(value){
-                return "Rp"+value.toLocaleString("id-ID");
-              }
-            }
-          }
-
-        }
-
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Penjualan (Rp)',
+        data: salesData,
+        borderColor: '#6366f1',
+        backgroundColor: 'rgba(99,102,241,0.1)',
+        fill: true,
+        tension: 0.4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true }
       }
-
     }
-  );
-
-}
-
-
-/* =====================================================
-   UTILITIES
-===================================================== */
-
-function formatRp(number){
-
-  return "Rp"+
-    Number(number)
-    .toLocaleString("id-ID");
-
-}
-
-
-function closeModal(id){
-
-  document.getElementById(id)
-  .classList.remove("show");
-
-}
-
-
-function showToast(message){
-
-  const toast =
-  document.getElementById("toast");
-
-  toast.innerText=message;
-
-  toast.classList.add("show");
-
-  setTimeout(()=>{
-    toast.classList.remove("show");
-  },2500);
-
-}
-
-
-function toggleDark(){
-
-  document.body.classList.toggle("dark");
-
-  localStorage.setItem(
-    "arizky_dark",
-    document.body.classList.contains("dark")
-  );
-
-}
-
-
-function toggleSidebar(){
-
-  document.getElementById("sidebar")
-  .classList.toggle("open");
-
-}
-
-
-/* =====================================================
-   INIT
-===================================================== */
-
-function init(){
-
-  document.getElementById("tanggal")
-  .innerText =
-  new Date().toLocaleDateString(
-    "id-ID",
-    {
-      weekday:"long",
-      day:"numeric",
-      month:"long",
-      year:"numeric"
-    }
-  );
-
-  renderProducts();
-  renderCart();
-  renderProductTable();
-  renderTransactions();
-  updateDashboard();
-
-}
-
-
-/* =====================================================
-   AUTO LOGIN
-===================================================== */
-
-if(localStorage.getItem("arizky_login")==="true"){
-
-  document.getElementById("loginScreen").style.display="none";
-
-  document.getElementById("app").style.display="block";
-
-  init();
-
-}
-
-
-if(localStorage.getItem("arizky_dark")==="true"){
-
-  document.body.classList.add("dark");
-
-}
-
-
-/* =====================================================
-   CLOSE MODAL WHEN CLICK OUTSIDE
-===================================================== */
-
-document.querySelectorAll(".modal")
-.forEach(modal=>{
-
-  modal.addEventListener("click",function(e){
-
-    if(e.target===modal)
-      modal.classList.remove("show");
-
   });
-
-});
+}
 
 </script>
-
 </body>
 </html>
