@@ -384,3 +384,22 @@ function renderHistoryTable(transactions) {
 function escapeHtml(text) {
   return text.replace(/'/g, "\\'").replace(/"/g, "&quot;");
 }
+
+/* =====================================================
+   FUNGSI GANTI TAB MENU (RESPONSIF HP)
+===================================================== */
+function switchTab(tabId) {
+  // Sembunyikan semua isi tab
+  const contents = document.querySelectorAll('.tab-content');
+  contents.forEach(content => content.classList.remove('active'));
+
+  // Matikan status active di semua tombol
+  const buttons = document.querySelectorAll('.tab-btn');
+  buttons.forEach(btn => btn.classList.remove('active'));
+
+  // Tampilkan tab yang dipilih
+  document.getElementById(tabId).classList.add('active');
+
+  // Aktifkan tombol yang diklik
+  event.currentTarget.classList.add('active');
+}
