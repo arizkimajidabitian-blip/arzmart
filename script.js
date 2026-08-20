@@ -26,17 +26,8 @@ let cart = [];
 let paymentMethod = "Cash";
 let chart = null;
 
-const initialProducts = [
-  { id: "1", name: "Aqua 600ml", price: 4000, stock: 20 },
-  { id: "2", name: "Teh Botol", price: 5000, stock: 15 },
-  { id: "3", name: "Indomie Goreng", price: 3500, stock: 30 },
-  { id: "4", name: "Kopi Sachet", price: 2500, stock: 25 },
-  { id: "5", name: "Roti Coklat", price: 6000, stock: 12 },
-  { id: "6", name: "Susu Kotak", price: 7000, stock: 10 }
-];
-
 /* =====================================================
-   FIREBASE REALTIME SINKRONISASI
+   FIREBASE REALTIME SINKRONISASI PERMANEN
 ===================================================== */
 
 // Realtime Listener Produk
@@ -45,11 +36,7 @@ db.ref("products").on("value", (snapshot) => {
   if (data) {
     products = Object.values(data);
   } else {
-    // Inisialisasi awal jika database online kosong
-    initialProducts.forEach(p => {
-      db.ref("products/" + p.id).set(p);
-    });
-    products = initialProducts;
+    products = [];
   }
   refreshCurrentUI();
 });
@@ -183,6 +170,11 @@ function renderProducts() {
   document.getElementById("jumlahProduk").innerText = filtered.length + " produk";
   grid.innerHTML = "";
 
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--muted); padding: 30px;">Belum ada produk. Tambahkan di menu Produk.</div>`;
+    return;
+  }
+
   filtered.forEach(p => {
     const disabled = p.stock <= 0;
     grid.innerHTML += `
@@ -211,6 +203,11 @@ function renderProductTable() {
   const tbody = document.getElementById("productTable");
   if (!tbody) return;
   tbody.innerHTML = "";
+
+  if (products.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);">Tidak ada data produk</td></tr>`;
+    return;
+  }
 
   products.forEach(p => {
     const status = p.stock > 5 ? `<span style="color:var(--success)">Tersedia</span>` : p.stock > 0 ? `<span style="color:var(--warning)">Menipis</span>` : `<span style="color:var(--danger)">Habis</span>`;
@@ -263,7 +260,6 @@ function saveProduct() {
   const prodId = editId ? String(editId) : String(Date.now());
   const productData = { id: prodId, name, price, stock };
 
-  // Langsung set ke lokasi node ID spesifik di Firebase
   db.ref("products/" + prodId).set(productData).then(() => {
     closeModal("productModal");
     showToast("Produk tersimpan ✓");
@@ -425,7 +421,7 @@ function completePayment() {
     }
   });
 
-  // Simpan Transaksi
+  // Simpan Transaksi Permanen di Firebase Realtime
   const transId = "TRX-" + Date.now();
   const transaction = {
     id: transId,
@@ -447,6 +443,11 @@ function renderTransactions() {
   if (!tbody) return;
   tbody.innerHTML = "";
 
+  if (transactions.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);">Belum ada riwayat transaksi</td></tr>`;
+    return;
+  }
+
   transactions.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach((t, i) => {
     const d = new Date(t.date);
     const dateStr = d.toLocaleDateString("id-ID") + " " + d.toLocaleTimeString("id-ID", {hour:'2-digit', minute:'2-digit'});
@@ -457,7 +458,7 @@ function renderTransactions() {
         <td><b>${t.method}</b></td>
         <td>${formatRp(t.total)}</td>
         <td>
-          <button class="btn btn-gray btn-sm" onclick="alert('Detail ID: ${t.id}')">👁️ Detail</button>
+          <button class="btn btn-gray btn-sm" onclick="alert('Detail Transaksi ID: ${t.id}\\nTotal: ${formatRp(t.total)}')">👁️ Detail</button>
         </td>
       </tr>
     `;
@@ -473,7 +474,7 @@ function clearTransactions() {
 }
 
 /* =====================================================
-   DASHBOARD STATS
+   DASHBOARD STATS & CHART
 ===================================================== */
 
 function updateDashboard() {
