@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ArizkyMart POS</title>
-  
-  <!-- PEMANGGILAN CSS UTAMA -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -13,46 +11,23 @@
   <div class="app-container">
     <header class="app-header">
       <h1>🛒 ArizkyMart POS</h1>
-      <p>Sistem Kasir & Manajemen Stok Produk</p>
+      <p>Sistem Kasir & Manajemen Stok</p>
     </header>
 
-    <div class="main-layout">
-      <!-- KOLOM KIRI: PRODUK -->
-      <main class="left-column">
-        <!-- FORM PRODUK -->
-        <section class="card">
-          <h2 id="formTitle">Tambah Produk Baru</h2>
-          <form id="productForm">
-            <input type="hidden" id="editId" />
-            
-            <div class="form-group">
-              <label for="productName">Nama Produk</label>
-              <input type="text" id="productName" placeholder="Contoh: Indomie Goreng" required />
-            </div>
+    <!-- MENU NAVIGATION TAB (Untuk HP & Desktop) -->
+    <nav class="tab-navigation">
+      <button class="tab-btn active" onclick="switchTab('tab-pos')">🛒 Kasir</button>
+      <button class="tab-btn" onclick="switchTab('tab-produk')">📦 Kelola Produk</button>
+      <button class="tab-btn" onclick="switchTab('tab-riwayat')">📜 Riwayat Transaksi</button>
+    </nav>
 
-            <div class="form-group-row">
-              <div class="form-group">
-                <label for="productPrice">Harga Satuan (Rp)</label>
-                <input type="number" id="productPrice" placeholder="3000" min="1" required />
-              </div>
-
-              <div class="form-group">
-                <label for="productStock">Stok Awal</label>
-                <input type="number" id="productStock" placeholder="50" min="0" required />
-              </div>
-            </div>
-
-            <div class="btn-group">
-              <button type="submit" id="btnSave" class="btn btn-primary">Simpan Produk</button>
-              <button type="button" id="btnCancel" class="btn btn-secondary" onclick="resetProductForm()" style="display:none;">Batal</button>
-            </div>
-          </form>
-        </section>
-
-        <!-- DAFTAR PRODUK -->
-        <section class="card">
+    <!-- TAB 1: KASIR (TRANSAKSI) -->
+    <div id="tab-pos" class="tab-content active">
+      <div class="pos-layout">
+        <!-- PILIH PRODUK -->
+        <section class="card flex-1">
           <div class="card-header">
-            <h2>Daftar Stok Produk</h2>
+            <h2>Pilih Produk</h2>
             <input type="text" id="searchProduct" placeholder="🔍 Cari produk..." onkeyup="filterProducts()" />
           </div>
 
@@ -60,7 +35,6 @@
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>Nama Produk</th>
                   <th>Harga</th>
                   <th>Stok</th>
@@ -68,19 +42,16 @@
                 </tr>
               </thead>
               <tbody id="productTableBody">
-                <tr><td colspan="5" class="text-center">Memuat data dari Firebase...</td></tr>
+                <tr><td colspan="4" class="text-center">Memuat data dari Firebase...</td></tr>
               </tbody>
             </table>
           </div>
         </section>
-      </main>
 
-      <!-- KOLOM KANAN: KASIR -->
-      <aside class="right-column">
-        <section class="card cart-card">
-          <h2>🛒 Kasir / Keranjang</h2>
-          
-          <div class="cart-table-wrapper">
+        <!-- KERANJANG BELANJA -->
+        <section class="card cart-card flex-1">
+          <h2>Keranjang Belanja</h2>
+          <div class="table-responsive">
             <table>
               <thead>
                 <tr>
@@ -91,7 +62,7 @@
                 </tr>
               </thead>
               <tbody id="cartTableBody">
-                <tr><td colspan="4" class="text-center">Keranjang masih kosong</td></tr>
+                <tr><td colspan="4" class="text-center">Keranjang kosong</td></tr>
               </tbody>
             </table>
           </div>
@@ -104,7 +75,7 @@
 
             <div class="form-group">
               <label for="payAmount">Uang Pembayaran (Rp)</label>
-              <input type="number" id="payAmount" placeholder="Masukkan nominal..." oninput="calculateChange()" />
+              <input type="number" id="payAmount" placeholder="Nominal bayar..." oninput="calculateChange()" />
             </div>
 
             <div class="summary-row">
@@ -112,38 +83,72 @@
               <strong id="changeAmount">Rp 0</strong>
             </div>
 
-            <button type="button" class="btn btn-success btn-checkout" onclick="checkout()">Selesaikan Transaksi & Cetak</button>
+            <button type="button" class="btn btn-success btn-checkout" onclick="checkout()">Bayar & Cetak Struk</button>
           </div>
         </section>
-      </aside>
+      </div>
     </div>
 
-    <!-- RIWAYAT PENJUALAN -->
-    <section class="card">
-      <h2>📜 Riwayat Penjualan Terbaru</h2>
-      <div class="table-responsive">
-        <table>
-          <thead>
-            <tr>
-              <th>ID Transaksi</th>
-              <th>Waktu</th>
-              <th>Total Item</th>
-              <th>Total Bayar</th>
-              <th>Uang Bayar</th>
-              <th>Kembalian</th>
-            </tr>
-          </thead>
-          <tbody id="historyTableBody">
-            <tr><td colspan="6" class="text-center">Belum ada riwayat transaksi</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <!-- TAB 2: KELOLA PRODUK (CRUD) -->
+    <div id="tab-produk" class="tab-content">
+      <section class="card max-w-600">
+        <h2 id="formTitle">Tambah Produk Baru</h2>
+        <form id="productForm">
+          <input type="hidden" id="editId" />
+          
+          <div class="form-group">
+            <label for="productName">Nama Produk</label>
+            <input type="text" id="productName" placeholder="Contoh: Indomie Goreng" required />
+          </div>
+
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="productPrice">Harga Satuan (Rp)</label>
+              <input type="number" id="productPrice" placeholder="3000" min="1" required />
+            </div>
+
+            <div class="form-group">
+              <label for="productStock">Stok Awal</label>
+              <input type="number" id="productStock" placeholder="50" min="0" required />
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button type="submit" id="btnSave" class="btn btn-primary">Simpan Produk</button>
+            <button type="button" id="btnCancel" class="btn btn-secondary" onclick="resetProductForm()" style="display:none;">Batal</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <!-- TAB 3: RIWAYAT TRANSAKSI -->
+    <div id="tab-riwayat" class="tab-content">
+      <section class="card">
+        <h2>Riwayat Penjualan Terbaru</h2>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>ID Transaksi</th>
+                <th>Waktu</th>
+                <th>Total Item</th>
+                <th>Total Bayar</th>
+                <th>Uang Bayar</th>
+                <th>Kembalian</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <tr><td colspan="6" class="text-center">Belum ada riwayat transaksi</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
   </div>
 
   <div id="receiptPrintArea" class="receipt-print-area"></div>
 
-  <!-- FIREBASE SDK -->
+  <!-- FIREBASE SDK & JS -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
   <script src="script.js"></script>
