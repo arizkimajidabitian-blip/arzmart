@@ -1,64 +1,92 @@
-/* RESET & BASE STYLES */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Segoe UI', Roboto, sans-serif;
 }
 
 body {
   background-color: #0f172a;
   color: #f8fafc;
-  padding: 20px;
-  line-height: 1.5;
+  padding: 12px;
 }
 
 .app-container {
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
 .app-header {
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
 }
 
 .app-header h1 {
   color: #f97316;
-  font-size: 2rem;
-  margin-bottom: 5px;
+  font-size: 1.6rem;
 }
 
 .app-header p {
   color: #94a3b8;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
 }
 
-/* LAYOUT GRID */
-.main-layout {
+/* NAVIGATION TABS */
+.tab-navigation {
   display: flex;
-  gap: 20px;
+  gap: 8px;
+  margin-bottom: 15px;
+  background-color: #1e293b;
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  overflow-x: auto;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.tab-btn.active {
+  background-color: #f97316;
+  color: #ffffff;
+}
+
+/* TAB CONTENT CONTROLLER */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* LAYOUT & CARDS */
+.pos-layout {
+  display: flex;
+  gap: 15px;
   flex-wrap: wrap;
 }
 
-.left-column {
-  flex: 2;
-  min-width: 320px;
-}
+.flex-1 { flex: 1; min-width: 300px; }
+.max-w-600 { max-width: 600px; margin: 0 auto; }
 
-.right-column {
-  flex: 1;
-  min-width: 300px;
-}
-
-/* CARD / CONTAINER */
 .card {
   background-color: #1e293b;
   border: 1px solid #334155;
   border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  padding: 16px;
+  margin-bottom: 15px;
 }
 
 .card-header {
@@ -66,45 +94,30 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   flex-wrap: wrap;
 }
 
 .card h2 {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   color: #fbbf24;
-  margin-bottom: 15px;
 }
 
-.card-header h2 {
-  margin-bottom: 0;
-}
-
-/* FORM STYLES */
-.form-group {
-  margin-bottom: 12px;
-}
-
-.form-group-row {
-  display: flex;
-  gap: 12px;
-}
-
-.form-group-row .form-group {
-  flex: 1;
-}
+/* FORMS & INPUTS */
+.form-group { margin-bottom: 12px; }
+.form-group-row { display: flex; gap: 10px; }
+.form-group-row .form-group { flex: 1; }
 
 label {
   display: block;
-  font-size: 0.85rem;
-  margin-bottom: 6px;
+  font-size: 0.8rem;
+  margin-bottom: 4px;
   color: #cbd5e1;
-  font-weight: 500;
 }
 
 input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 10px;
   border: 1px solid #475569;
   border-radius: 6px;
   background-color: #0f172a;
@@ -113,124 +126,84 @@ input {
   font-size: 0.9rem;
 }
 
-input:focus {
-  border-color: #f97316;
-  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
-}
-
-#searchProduct {
-  width: 220px;
-  padding: 6px 12px;
-}
+input:focus { border-color: #f97316; }
 
 /* BUTTONS */
-.btn-group {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-}
+.btn-group { display: flex; gap: 8px; margin-top: 10px; }
 
 .btn {
-  padding: 9px 16px;
+  padding: 8px 14px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 0.88rem;
-  transition: all 0.2s ease;
+  font-size: 0.85rem;
 }
 
-.btn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
-.btn-primary { background-color: #f97316; color: #ffffff; }
-.btn-secondary { background-color: #475569; color: #ffffff; }
-.btn-success { background-color: #22c55e; color: #ffffff; }
-.btn-danger { background-color: #ef4444; color: #ffffff; padding: 5px 10px; font-size: 0.78rem; }
-.btn-edit { background-color: #3b82f6; color: #ffffff; padding: 5px 10px; font-size: 0.78rem; }
-.btn-add-cart { background-color: #eab308; color: #0f172a; padding: 5px 10px; font-size: 0.78rem; }
+.btn-primary { background-color: #f97316; color: #fff; }
+.btn-secondary { background-color: #475569; color: #fff; }
+.btn-success { background-color: #22c55e; color: #fff; }
+.btn-danger { background-color: #ef4444; color: #fff; padding: 4px 8px; font-size: 0.75rem; }
+.btn-edit { background-color: #3b82f6; color: #fff; padding: 4px 8px; font-size: 0.75rem; }
+.btn-add-cart { background-color: #eab308; color: #0f172a; padding: 4px 8px; font-size: 0.75rem; }
 
 .btn-checkout {
   width: 100%;
   padding: 12px;
   font-size: 1rem;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
-/* TABLE STYLES */
-.table-responsive {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 5px;
-}
+/* TABLES */
+.table-responsive { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
 
 th, td {
-  padding: 10px 12px;
+  padding: 8px 10px;
   text-align: left;
   border-bottom: 1px solid #334155;
-  font-size: 0.88rem;
+  font-size: 0.85rem;
 }
 
-th {
-  background-color: #0f172a;
-  color: #fbbf24;
-  font-weight: 600;
-}
-
-.text-center {
-  text-align: center;
-  color: #64748b;
-  padding: 20px 0;
-}
-
-.action-btns {
-  display: flex;
-  gap: 6px;
-}
+th { background-color: #0f172a; color: #fbbf24; }
+.text-center { text-align: center; color: #64748b; padding: 15px 0; }
 
 /* CART SUMMARY */
 .cart-summary {
-  margin-top: 20px;
-  padding-top: 15px;
+  margin-top: 15px;
+  padding-top: 12px;
   border-top: 2px dashed #334155;
 }
 
 .summary-row {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 0.95rem;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
 }
 
 .total-row {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   color: #22c55e;
-  margin-bottom: 15px;
 }
 
-/* AREA PRINT STRUK */
-.receipt-print-area {
-  display: none;
+/* RESPONSIVE LAYOUT UNTUK HP */
+@media (max-width: 600px) {
+  body { padding: 8px; }
+  .pos-layout { flex-direction: column; }
+  .tab-btn { font-size: 0.8rem; padding: 8px; }
+  #searchProduct { width: 100%; }
 }
 
+/* PRINT AREA */
+.receipt-print-area { display: none; }
 @media print {
   body * { visibility: hidden; }
   #receiptPrintArea, #receiptPrintArea * { visibility: visible; }
   #receiptPrintArea {
     display: block !important;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 80mm;
-    padding: 10px;
-    font-family: monospace;
-    color: #000000;
-    background: #ffffff;
+    position: absolute; left: 0; top: 0;
+    width: 80mm; padding: 10px;
+    font-family: monospace; color: #000; background: #fff;
   }
 }
