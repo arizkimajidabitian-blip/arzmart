@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ArizkyMart POS - Sistem Kasir Lengkap</title>
+  <title>ArizkyMart POS</title>
+  
+  <!-- PEMANGGILAN CSS UTAMA -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -11,11 +13,11 @@
   <div class="app-container">
     <header class="app-header">
       <h1>🛒 ArizkyMart POS</h1>
-      <p>Sistem Manajemen Stok & Kasir Penjualan</p>
+      <p>Sistem Kasir & Manajemen Stok Produk</p>
     </header>
 
     <div class="main-layout">
-      <!-- KOLOM KIRI: MANAGEMENT PRODUK -->
+      <!-- KOLOM KIRI: PRODUK -->
       <main class="left-column">
         <!-- FORM PRODUK -->
         <section class="card">
@@ -35,7 +37,7 @@
               </div>
 
               <div class="form-group">
-                <label for="productStock">Stok awal</label>
+                <label for="productStock">Stok Awal</label>
                 <input type="number" id="productStock" placeholder="50" min="0" required />
               </div>
             </div>
@@ -47,11 +49,11 @@
           </form>
         </section>
 
-        <!-- DAFTAR STOK PRODUK -->
+        <!-- DAFTAR PRODUK -->
         <section class="card">
           <div class="card-header">
             <h2>Daftar Stok Produk</h2>
-            <input type="text" id="searchProduct" placeholder="🔍 Cari nama/ID produk..." onkeyup="filterProducts()" />
+            <input type="text" id="searchProduct" placeholder="🔍 Cari produk..." onkeyup="filterProducts()" />
           </div>
 
           <div class="table-responsive">
@@ -73,10 +75,10 @@
         </section>
       </main>
 
-      <!-- KOLOM KANAN: KASIR & KERANJANG -->
+      <!-- KOLOM KANAN: KASIR -->
       <aside class="right-column">
         <section class="card cart-card">
-          <h2>🛒 Kasir / Keranjang Belanja</h2>
+          <h2>🛒 Kasir / Keranjang</h2>
           
           <div class="cart-table-wrapper">
             <table>
@@ -116,7 +118,7 @@
       </aside>
     </div>
 
-    <!-- RIWAYAT TRANSAKSI -->
+    <!-- RIWAYAT PENJUALAN -->
     <section class="card">
       <h2>📜 Riwayat Penjualan Terbaru</h2>
       <div class="table-responsive">
@@ -139,14 +141,11 @@
     </section>
   </div>
 
-  <!-- AREA STRUK UNTUK DICETAK (Hidden di Layar Normal) -->
   <div id="receiptPrintArea" class="receipt-print-area"></div>
 
-  <!-- FIREBASE SDK COMPAT -->
+  <!-- FIREBASE SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
-  <!-- JS UTAMA -->
   <script src="script.js"></script>
 </body>
 </html>
