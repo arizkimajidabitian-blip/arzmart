@@ -3,152 +3,227 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ArizkyMart POS</title>
+  <title>ArizkyMart POS Pro</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
 
-  <div class="app-container">
-    <header class="app-header">
-      <h1>🛒 ArizkyMart POS</h1>
-      <p>Sistem Kasir & Manajemen Stok</p>
-    </header>
-
-    <!-- MENU NAVIGATION TAB (Untuk HP & Desktop) -->
-    <nav class="tab-navigation">
-      <button class="tab-btn active" onclick="switchTab('tab-pos')">🛒 Kasir</button>
-      <button class="tab-btn" onclick="switchTab('tab-produk')">📦 Kelola Produk</button>
-      <button class="tab-btn" onclick="switchTab('tab-riwayat')">📜 Riwayat Transaksi</button>
-    </nav>
-
-    <!-- TAB 1: KASIR (TRANSAKSI) -->
-    <div id="tab-pos" class="tab-content active">
-      <div class="pos-layout">
-        <!-- PILIH PRODUK -->
-        <section class="card flex-1">
-          <div class="card-header">
-            <h2>Pilih Produk</h2>
-            <input type="text" id="searchProduct" placeholder="🔍 Cari produk..." onkeyup="filterProducts()" />
-          </div>
-
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Nama Produk</th>
-                  <th>Harga</th>
-                  <th>Stok</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody id="productTableBody">
-                <tr><td colspan="4" class="text-center">Memuat data dari Firebase...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- KERANJANG BELANJA -->
-        <section class="card cart-card flex-1">
-          <h2>Keranjang Belanja</h2>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Produk</th>
-                  <th>Qty</th>
-                  <th>Subtotal</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="cartTableBody">
-                <tr><td colspan="4" class="text-center">Keranjang kosong</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="cart-summary">
-            <div class="summary-row total-row">
-              <span>Total:</span>
-              <strong id="cartTotal">Rp 0</strong>
-            </div>
-
-            <div class="form-group">
-              <label for="payAmount">Uang Pembayaran (Rp)</label>
-              <input type="number" id="payAmount" placeholder="Nominal bayar..." oninput="calculateChange()" />
-            </div>
-
-            <div class="summary-row">
-              <span>Kembalian:</span>
-              <strong id="changeAmount">Rp 0</strong>
-            </div>
-
-            <button type="button" class="btn btn-success btn-checkout" onclick="checkout()">Bayar & Cetak Struk</button>
-          </div>
-        </section>
+  <!-- HALAMAN LOGIN -->
+  <div id="loginScreen" class="login-overlay">
+    <div class="login-box">
+      <div class="login-header">
+        <i class="fa-solid fa-shop brand-icon"></i>
+        <h2>ArizkyMart POS</h2>
+        <p>Silakan login untuk mengakses kasir</p>
       </div>
-    </div>
-
-    <!-- TAB 2: KELOLA PRODUK (CRUD) -->
-    <div id="tab-produk" class="tab-content">
-      <section class="card max-w-600">
-        <h2 id="formTitle">Tambah Produk Baru</h2>
-        <form id="productForm">
-          <input type="hidden" id="editId" />
-          
-          <div class="form-group">
-            <label for="productName">Nama Produk</label>
-            <input type="text" id="productName" placeholder="Contoh: Indomie Goreng" required />
-          </div>
-
-          <div class="form-group-row">
-            <div class="form-group">
-              <label for="productPrice">Harga Satuan (Rp)</label>
-              <input type="number" id="productPrice" placeholder="3000" min="1" required />
-            </div>
-
-            <div class="form-group">
-              <label for="productStock">Stok Awal</label>
-              <input type="number" id="productStock" placeholder="50" min="0" required />
-            </div>
-          </div>
-
-          <div class="btn-group">
-            <button type="submit" id="btnSave" class="btn btn-primary">Simpan Produk</button>
-            <button type="button" id="btnCancel" class="btn btn-secondary" onclick="resetProductForm()" style="display:none;">Batal</button>
-          </div>
-        </form>
-      </section>
-    </div>
-
-    <!-- TAB 3: RIWAYAT TRANSAKSI -->
-    <div id="tab-riwayat" class="tab-content">
-      <section class="card">
-        <h2>Riwayat Penjualan Terbaru</h2>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>ID Transaksi</th>
-                <th>Waktu</th>
-                <th>Total Item</th>
-                <th>Total Bayar</th>
-                <th>Uang Bayar</th>
-                <th>Kembalian</th>
-              </tr>
-            </thead>
-            <tbody id="historyTableBody">
-              <tr><td colspan="6" class="text-center">Belum ada riwayat transaksi</td></tr>
-            </tbody>
-          </table>
+      <form id="loginForm">
+        <div class="input-group">
+          <i class="fa-solid fa-user"></i>
+          <input type="text" id="loginUser" placeholder="Username (arz123)" required />
         </div>
-      </section>
+        <div class="input-group">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" id="loginPass" placeholder="Password (123)" required />
+        </div>
+        <button type="submit" class="btn-login">Masuk ke Sistem <i class="fa-solid fa-arrow-right"></i></button>
+      </form>
     </div>
   </div>
 
+  <!-- APLIKASI UTAMA (DASHBOARD) -->
+  <div id="appDashboard" class="app-wrapper hidden">
+    <!-- SIDEBAR NAVIGASI -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <i class="fa-solid fa-cash-register"></i>
+        <span>ArizkyMart</span>
+      </div>
+      <nav class="sidebar-menu">
+        <button class="nav-item active" onclick="switchTab('tab-pos')">
+          <i class="fa-solid fa-cart-shopping"></i> <span>Kasir</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('tab-produk')">
+          <i class="fa-solid fa-boxes-stacked"></i> <span>Stok Produk</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('tab-riwayat')">
+          <i class="fa-solid fa-receipt"></i> <span>Riwayat Transaksi</span>
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn-logout" onclick="logout()">
+          <i class="fa-solid fa-right-from-bracket"></i> <span>Keluar</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- KONTEN UTAMA -->
+    <div class="main-content">
+      <!-- HEADER TOP BAR -->
+      <header class="topbar">
+        <div class="topbar-title">
+          <h2 id="pageTitle">Halaman Kasir</h2>
+        </div>
+        <div class="user-profile">
+          <i class="fa-solid fa-circle-user"></i>
+          <span id="activeUser">Kasir (arz123)</span>
+        </div>
+      </header>
+
+      <!-- TAB 1: KASIR -->
+      <div id="tab-pos" class="tab-content active">
+        <!-- STATS BAR -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <i class="fa-solid fa-box icon-blue"></i>
+            <div>
+              <p>Total Jenis Produk</p>
+              <h3 id="statTotalProducts">0</h3>
+            </div>
+          </div>
+          <div class="stat-card">
+            <i class="fa-solid fa-circle-dollar-to-slot icon-green"></i>
+            <div>
+              <p>Omset Hari Ini</p>
+              <h3 id="statTodayIncome">Rp 0</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="pos-container">
+          <!-- DAFTAR KATALOG PRODUK -->
+          <div class="pos-products card">
+            <div class="search-bar">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="searchProduct" placeholder="Cari produk berdasarkan nama / ID..." onkeyup="filterProducts()" />
+            </div>
+            <div id="productGrid" class="product-grid">
+              <!-- Grid Produk dimasukkan via JS -->
+            </div>
+          </div>
+
+          <!-- KERANJANG KASIR -->
+          <div class="pos-cart card">
+            <div class="card-title">
+              <i class="fa-solid fa-basket-shopping"></i> Keranjang Belanja
+            </div>
+            <div class="cart-items-wrapper">
+              <table class="cart-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th width="70">Qty</th>
+                    <th>Total</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="cartTableBody">
+                  <tr><td colspan="4" class="text-center">Keranjang Masih Kosong</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="cart-checkout-section">
+              <div class="summary-line">
+                <span>Total Tagihan</span>
+                <strong id="cartTotal" class="total-price">Rp 0</strong>
+              </div>
+              <div class="input-field">
+                <label>Nominal Pembayaran (Rp)</label>
+                <input type="number" id="payAmount" placeholder="0" oninput="calculateChange()" />
+              </div>
+              <div class="summary-line">
+                <span>Kembalian</span>
+                <strong id="changeAmount">Rp 0</strong>
+              </div>
+              <button class="btn-checkout" onclick="checkout()">
+                <i class="fa-solid fa-print"></i> Proses Bayar & Cetak
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: KELOLA PRODUK -->
+      <div id="tab-produk" class="tab-content">
+        <div class="product-management-layout">
+          <div class="card form-card">
+            <h3 id="formTitle"><i class="fa-solid fa-plus-circle"></i> Tambah Produk Baru</h3>
+            <form id="productForm">
+              <input type="hidden" id="editId" />
+              <div class="form-group">
+                <label>Nama Produk</label>
+                <input type="text" id="productName" placeholder="Contoh: Kopi Hitam" required />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Harga Satuan (Rp)</label>
+                  <input type="number" id="productPrice" placeholder="5000" min="1" required />
+                </div>
+                <div class="form-group">
+                  <label>Stok Awal</label>
+                  <input type="number" id="productStock" placeholder="20" min="0" required />
+                </div>
+              </div>
+              <div class="btn-row">
+                <button type="submit" id="btnSave" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+                <button type="button" id="btnCancel" class="btn-cancel" onclick="resetProductForm()" style="display:none;">Batal</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="card table-card">
+            <h3><i class="fa-solid fa-boxes-stacked"></i> Stok Produk Tersedia</h3>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nama Produk</th>
+                    <th>Harga</th>
+                    <th>Stok</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="productTableBody">
+                  <tr><td colspan="5" class="text-center">Memuat data produk...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: RIWAYAT TRANSAKSI -->
+      <div id="tab-riwayat" class="tab-content">
+        <div class="card">
+          <h3><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Penjualan Kasir</h3>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID Transaksi</th>
+                  <th>Waktu WIB</th>
+                  <th>Jumlah Item</th>
+                  <th>Total Bayar</th>
+                  <th>Bayar (Tunai)</th>
+                  <th>Kembalian</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody">
+                <tr><td colspan="6" class="text-center">Belum ada transaksi</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AREA PRINT STRUK -->
   <div id="receiptPrintArea" class="receipt-print-area"></div>
 
-  <!-- FIREBASE SDK & JS -->
+  <!-- FIREBASE SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
   <script src="script.js"></script>
